@@ -1,0 +1,812 @@
+{
+  "akamai": {
+    "fallback": "Internal error. Try again later.",
+    "global": {
+      "initEdgeRc": "Check if your .edgerc file and section are specified correctly and contain valid credentials.",
+      "requestParsingError": "Error parsing API request body.",
+      "responseParsingError": "Error parsing API response.",
+      "jsonOutputFailed": "Error occurred while printing JSON.",
+      "invalidCommandInput": "We can either provide relevant flags as described in Usage OR provide json input file for the command.",
+      "invalidJsonInput": "Invalid JSON input. Correct it and try again.",
+      "500": "An internal server error occurred. Try again later.",
+      "502": "Bad gateway. Try again later.",
+      "503": "Service is unavailable. Try again later.",
+      "504": "The request has timed out. Try again later.",
+      "405": "Method Not Allowed. Try again later.",
+      "edgeGridError": {
+        "resourceNotFound": "The requested resource can't be found.",
+        "invalidHost": "The host is invalid.",
+        "httpsRequired": "HTTPS is required in the host",
+        "invalidEndpoint": "The API endpoint is invalid",
+        "invalidTimestamp": "Incorrect system time for API Client. Check system's clock synced with a time authority.",
+        "notAuthorized": "The identity is not authorized to manage any context.",
+        "authorizationHeaderMissing": "The authorization header missing",
+        "invalidAuthorizationClientToken": "Invalid authorization client token",
+        "invalidAuthorizationAccessToken": "Invalid authorization access token",
+        "theSignatureDoesNotMatch": "The signature does not match for client_secret",
+        "theHostHeaderIsNotValidServiceConsumerToken": "The host header is not valid service consumer token"
+      }
+    },
+    "testCenter": {
+      "short": "Test Center CLI",
+      "long": "Test Center is a testing tool that checks the effect of configuration changes \non your web property. Use Test Center as part of your testing protocol to increase \nyour confidence in the safety and accuracy of your configuration changes.",
+      "edgerc": "Sets the new path to the .edgerc file. Provide the full path.",
+      "section": "Sets the new section name of the .edgerc file with credentials for the CLI to use.",
+      "accountKey": "Switches to the account with specific Account ID when performing operations.",
+      "forceColor": "Forces color to non-TTY output.",
+      "json": "Prints JSON output, where applicable.",
+      "help": "Help for test-center.",
+      "version": "Version for test-center.",
+      "conditions": {
+        "short": "Lists supported condition statements.",
+        "long": "This command lists condition statements that you can use when creating test cases. Make sure to substitute default values in '\" \"' with your own.",
+        "subCommand": {
+          "invalid": {
+            "argumentPassed": "unknown command %q for %q."
+          }
+        },
+        "messages": {
+          "spinner": {
+            "getConditionTemplate": "Getting conditions"
+          },
+          "display": {
+            "conditionsHeader": "LIST OF SUPPORTED CONDITION STATEMENTS"
+          }
+        }
+      },
+      "testSuite": {
+        "short": "List commands available for test suites.",
+        "long": "Test suites act as containers for functional test cases. You can create, edit, or remove test suites, \nmanage test suites' using JSON input, add test cases to test suites, and generate a default test suite for a particular property.",
+        "add": {
+          "short": "Creates a test suite.",
+          "long": "This command creates a test suite. Test suites act as containers for functional test cases. You can add a name and \ndescription to a test suite to provide more details about it and the \nincluded test cases. You can also set if the test suite needs to be locked or \nstateful. Test suites can be associated to a property version.\n\nIn stateful test suites, test cases are executed in the order they are added and \ncookies and session information are retained for subsequent test cases.\n\n- Locked test suites can be modified only by their editors and owners.",
+          "name": "Name of the test suite.",
+          "description": "Optional. Test suite's description.",
+          "unlocked": "Optional. Unlocks the test suite. By default, all test suites are locked.",
+          "stateful": "Optional. Sets the test suite to stateful. By default test suites are stateless.",
+          "property": "Optional. Property name you want the test suite to be associated to, for example 'example.com'. This flag needs to be combined with the '--propver' flag.",
+          "propver": "Optional. Property version you want the test suite to be associated to, for example '4'. This flag needs to be combined with the '--property' flag.",
+          "flag": {
+            "missing": {
+              "name": "Missing the required '--name' flag. Add the flag and try again.",
+              "propertyVersion": "Missing one of the flags, either '--property' or '--propver'. Correct your input and try again."
+            },
+            "invalid": {
+              "propertyVersion": "Invalid '--property' or '--propver' flag value. Enter a valid property name and its version and try again. Example: --property 'example.com'  --propver '4'"
+            }
+          },
+          "validationError": {
+            "requiredFieldMissing": "The '{{requestField}}' property is missing.",
+            "invalidValue": "The '{{requestField}}' is invalid or it's an empty string. Correct your input and try again.",
+            "maxLengthExceeded": "The '{{requestField}}' property exceeds the allowed characters limit.",
+            "entityAlreadyExists": "The test suite with such name already exists. Provide a new name and try again."
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Write permission, which is required to access the test suites. Contact your Account administrator."
+          },
+          "invalidRequestBody": "Invalid request. Correct the input following examples and try again.",
+          "resourceNotFound": "The requested resource '{{requestField}}' can't be found.",
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "addTestSuite": "Creating test suite"
+            },
+            "display": {
+              "addTestSuiteSuccess": "Test suite created"
+            }
+          }
+        },
+        "edit": {
+          "short": "Edits a test suite.",
+          "long": "This command edits a test suite with a specific ID. Provide only flags with values you want to edit in the current test suite.",
+          "id": "Unique identifier of the test suite you want to edit.",
+          "name": "Optional. Name of the test suite.",
+          "description": "Optional. Test suite's description.",
+          "unlocked": "Optional. Whether you want the test suite to be locked or not. By default test suites are locked.",
+          "stateful": "Optional. Whether you want the test suite is stateful or not. By default test suites are stateless.",
+          "property": "Optional. Property name you want the test suite to be associated to, for example 'example.com'. This flag needs to be combined with the '--propver' flag.",
+          "propver": "Optional. Property version you want the test suite to be associated to, for example '4'. This flag needs to be combined with the '--property' flag.",
+          "removeProperty": "Optional. Removes test suite's current association to the property version. If applicable, provide either this flag or '--property' and '--propver'.",
+          "flag": {
+            "missing": {
+              "flagOrJsonImport": "Missing required flags or JSON input. Correct the input following examples and try again.",
+              "id": "Missing the required '--id' flag. Add the flag and try again.",
+              "propertyVersion": "Missing one of the flags, either '--property' or '--propver'. Correct your input and try again."
+            },
+            "invalid": {
+              "all": "Invalid request. At least one provided value needs to be different from current settings of the test suite.",
+              "id": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again.",
+              "propertyVersion": "Invalid '--property' or '--propver' flag value. Enter a valid property name and its version and try again. Example: --property 'example.com'  --propver '4'",
+              "removeProperty": "Invalid '--property', '--propver' and '--remove-property' flags usage. Provide either '--remove-property' or '--property' and '--propver' and try again."
+            }
+          },
+          "update": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Write permission, which is required to access the test suites. Contact your Account administrator.",
+              "userIsNotOwnerOrEditor": "You don't have the edit access to this test suite. Request the edit access and try again once your request is approved."
+            },
+            "validationError": {
+              "alreadyAssociatedToRequirement": "This test suite is already associated to a requirement. Test suites can be associated either to a requirement or a property version, not both. Remove the association or select a different test suite and try again.",
+              "resourceInDeletedState": "You can't edit this test suite because it's in the deleted state. Restore it and try again.",
+              "testRunsInProgress": "You can't edit test suites involved in a test run in progress. Wait until the test run is complete and try again.",
+              "entityAlreadyExists": "The test suite with such name already exists. Provide a new name and try again.",
+              "existingAssociatedTestCasesHaveDifferentClientProfiles": "In a stateful test suite you can add only functional test cases that use the same client profile as the test cases already included in this test suite.",
+              "onlyOwnerCanChangeLockedStatus": "You can't edit the Locked status because you don't have the Owners access. Request it and try again once your request is approved.",
+              "requiredFieldMissing": "The '{{requestField}}' property is missing.",
+              "invalidValue": "The '{{requestField}}' is invalid or it's an empty string. Correct your input and try again.",
+              "maxLengthExceeded": "The '{{requestField}}' property exceeds the allowed characters limit. Correct your input and try again."
+            },
+            "invalidRequestBody": "Invalid request. Correct the input following examples and try again.",
+            "resourceNotFound": "The requested resource '{{requestField}}' can't be found."
+          },
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to get the test suite. Contact your Account administrator."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to verify the ID and try again."
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "editTestSuite": "Editing test suite"
+            },
+            "display": {
+              "editTSSuccess": "Test suite edited"
+            }
+          }
+        },
+        "list": {
+          "short": "Lists test suites available for your account.",
+          "long": "This command lists test suites available for your account. You can filter the results by user, property the test suite is associated to, or a string from test suite's name or description. The list includes also the recently deleted test suites that you can restore.",
+          "property": "Optional. Property name the test suite is associated to, for example 'example.com_pm'.",
+          "propver": "Optional. Property version the test suite is associated to, for example '4'. This flag needs to be combined with the '--property' flag.",
+          "user": "Optional. Username who created, modified, or deleted the test suite.",
+          "search": "Optional. String value present in a test suite's name or description.",
+          "flag": {
+            "invalid": {
+              "propertyVersion": "Invalid '--propver' flag value or usage. It must be a number and it must be used together with the '--property' flag. Correct the input and try again."
+            }
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Read permission, which is required to view the test suites. Contact your Account administrator."
+          },
+          "validationError": "The '{{requestField}}' is missing for property.",
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "getTestSuite": "Getting test suites"
+            },
+            "display": {
+              "noTestSuiteFoundWarning": "No test suites found"
+            }
+          }
+        },
+        "import": {
+          "short": "Imports a JSON test suite.",
+          "long": "This command imports a test suite from a JSON file or standard JSON input.",
+          "flag": {
+            "missing": {
+              "json": "Missing JSON data. Pass the JSON data and try again."
+            },
+            "invalid": {
+              "json": "Failed to import the test suite from entered JSON data. Correct the input following examples and try again."
+            }
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Read permission, which is required to view the test suites. Contact your Account administrator."
+          },
+          "hostnameAccessMissing": "You don't have access to all the hostnames of included test cases. Get the access or edit the hostnames and try again.",
+          "duplicateResourceInPayload": "The requested '{{requestField}}' has some duplicates. Remove the duplicates and try again.",
+          "urlShouldContainPath": "Missing path in the URL. Correct the URL and try again.",
+          "urlPathShouldContainAlphabeticCharacters": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing alphabetic characters. Edit the URL and try again.",
+          "urlShouldContainQueryParam": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing query parameters. Edit the URL and try again.",
+          "dataTypeMismatch": "The value of a variable in condition doesn't match the expected data type of the condition. Verify the entered condition and the value and try again.",
+          "resourceNotFound": "The requested resource, '{{requestField}}', can't be found.",
+          "invalidCharacterFound": "The requested resource, '{{requestField}}', contains invalid characters. Correct the values and try again.",
+          "malformedExpressionFound": "The requested resource, '{{requestField}}', contains malformed expressions. Correct the values and try again.",
+          "invalidConditionExpression": "The requested resource, '{{requestField}}', contains invalid conditions. Verify the entered values, format, and type and try again.",
+          "customValueNotSupported": "Invalid condition statement. You can only use default available values for this condition. Use the condition template to create a valid condition and try again.",
+          "invalidRequestBody": "Invalid request. Correct the input following examples and try again.",
+          "validationError": {
+            "alreadyAssociatedToRequirement": "This test suite is already associated to a requirement. Test suites can be associated either with a requirement or a property version, not both. Remove the association or select a different test suite and try again.",
+            "entityAlreadyExists": "The test suite with such name already exists. Provide a new name and try again.",
+            "existingAssociatedTestCasesHaveDifferentClientProfiles": "In a stateful test suite you can add only functional test cases that use the same client profile as the test cases already included in this test suite.",
+            "requiredFieldMissing": "The '{{requestField}}' property is missing.",
+            "invalidValue": "The '{{requestField}}' is invalid or it's an empty string. Correct your input and try again.",
+            "maxLengthExceeded": "The '{{requestField}}' property exceeds the allowed characters limit. Correct your input and try again.",
+            "maxAssociationsExceeded": "The number of test cases in this test suite exceeded the limit of '{{maxLimit}}'. Create a new test suite for test cases exceeding the limit.",
+            "testRequestClientProfileLimitExceeded": "The number of test request and client profiles in this test suite exceeded the limit of '{{maxLimit}}'. Create a new test suite for client profiles exceeding the limit.",
+            "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this.",
+            "testCasesContainsHeterogeneousClientProfiles": "In stateful test suites, test cases need to have the same client profile. Edit the test cases and try again.",
+            "customValueNotSupported": "Invalid condition statement. You can only use default available values for this condition. Use the condition template to create a valid condition and try again."
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "importTestSuite": "Importing test suite"
+            },
+            "display": {
+              "importTSTestCaseFailed": "Failed to import some test cases. Run the 'test-suite manage' command to update the test suite.",
+              "importTSVariableFailed": "Failed to import some variables. Run the 'test-suite manage' command to update the test suite.",
+              "testSuiteDetails": "TEST SUITE DETAILS",
+              "noTestSuiteFoundWithName": "No test suite found with the name '%s'",
+              "noTestSuiteFoundWarning": "No test suites to import found",
+              "testCasesAdded": "Test cases imported"
+            }
+          }
+        },
+        "generateDefault": {
+          "short": "Generates a default test suite for a specific property version.",
+          "long": "This command generates a default test suite for a property version using provided URLs. Based on property settings and its behaviors and the '--url' flag value, Test Center generates a test suite object with test cases and variables for you to modify and add to Test Center using the 'test-suite import' command.",
+          "property": "Property name you want to generate the test suite for, for example 'example.com'. This flag needs to be combined with the '--propver' flag.",
+          "propver": "Property version you want to generate the test suite for, for example '4'. This flag needs to be combined with the '--property' flag.",
+          "url": "Fully qualified URL to be included in the generated test suite. Repeat this flag to provide more than one URL.",
+          "flag": {
+            "missing": {
+              "url": "Missing the required '--url' flag. Add the flag and try again.",
+              "propertyVersion": "Missing at least one of the required flags, '--property' and '--propver'. Provide all required data and try again.",
+              "flagOrJsonImport": "Missing required flags or JSON input. Correct the input following examples and try again."
+            },
+            "invalid": {
+              "propertyVersion": "Invalid '--property' or '--propver' flag value. Enter a valid property name and its version and try again. Example: --property 'example.com'  --propver '4'",
+              "url": "Invalid URL value. It needs to contain the protocol, hostname, path, and any applicable string parameters. For example 'https://www.example.com'. Correct your input and try again."
+            }
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Write permission, which is required to generate the default test suite. Contact your Account administrator."
+          },
+          "resourceNotFound": "The requested resource '{{requestField}}' can't be found.",
+          "validationError": {
+            "hostnameAccessMissingForGivenConfig": "These hostnames doesn't belong to the given property version: '{{requestValues}}'.",
+            "requiredFieldMissing": "The '{{requestField}}' property is missing.",
+            "invalidValue": "The '{{requestField}}' is invalid or it's an empty string. Correct your input and try again."
+          },
+          "invalidRequest": "Method Not Allowed",
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "generateDefaultTestSuite": "Generating default test suite"
+            },
+            "display": {
+              "generateDefaultTSSuccess": "Default test suite based on '%s %d' generated. Review and update the JSON test suite and use the 'test-suite import' command to add it as a new test suite."
+            }
+          }
+        },
+        "manage": {
+          "short": "Updates an the existing test suite using a JSON file or standard JSON input.",
+          "long": "This command updates an the existing test suite using a JSON file or standard JSON input. Provide the whole test suite object, together with test cases and variables, to include in Test Center. Only data provided in the latest JSON input will be saved.",
+          "flag": {
+            "missing": {
+              "json": "Missing JSON input. Correct the input following examples and try again.",
+              "testSuiteId": "Missing the required '--id' flag. Run the 'test-suite list' command to get the ID value. Add the flag and try again."
+            },
+            "invalid": {
+              "json": "Failed to parse JSON data. Correct the input following examples and try again."
+            }
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Read permission, which is required to view the test suites. Contact your Account administrator.",
+            "userIsNotOwnerOrEditor": "You don't have the edit access to this test suite. Request the edit access and try again once your request is approved.",
+            "hostnameAccessMissingForAssociatedTestCases": "You don't have access to hostnames of at least one test case included in the test suite. Get the access or edit the hostnames and try again."
+          },
+          "invalidConditionExpression": "The following conditions are invalid. Verify the values, format, and type and try again: '{{requestValues}}'",
+          "resourceNotFound": "The requested resource '{{requestField}}' can't be found.",
+          "validationError": {
+            "alreadyAssociatedToRequirement": "This test suite is already associated to a requirement. Test suites can be associated either with a requirement or a property version, not both. Remove the association or select a different test suite and try again.",
+            "entityAlreadyExists": "The test suite with such name already exists. Provide a new name and try again.",
+            "existingAssociatedTestCasesHaveDifferentClientProfiles": "In a stateful test suite you can add only functional test cases that use the same client profile as the test cases already included in this test suite.",
+            "requiredFieldMissing": "The '{{requestField}}' property is missing.",
+            "onlyOwnerCanChangeLockedStatus": "You can't edit the Locked status because you don't have the Owners access. Request it and try again once your request is approved.",
+            "invalidValue": "The '{{requestField}}' is invalid or it's an empty string. Correct your input and try again.",
+            "maxLengthExceeded": "The '{{requestField}}' property exceeds the allowed characters limit.",
+            "testCasesContainsHeterogeneousClientProfiles": "In stateful test suites, test cases need to have the same client profile. Edit the test cases and try again.",
+            "resourceNotFound": "The requested resource '{{requestField}}' can't be found for some of the fields. Verify the included objects and try again.",
+            "duplicateResourceInPayload": "The requested '{{requestField}}' has some duplicates. Remove the duplicates and try again.",
+            "duplicateResourceWithDifferentId": "The requested resource '{{requestField}}' has some duplicates with different IDs. Verify the included objects and try again.",
+            "testRunsInProgress": "You can't remove test cases involved in a test run in progress. Wait until the test run is complete and try again.",
+            "invalidCharacterFound": "The requested resource '{{requestField}}' has some invalid characters. Correct the values and try again.",
+            "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this.",
+            "resourceInDeletedState": "You can't edit this test suite because it's in the deleted state. Restore it and try again.",
+            "malformedExpressionFound": "The requested resource '{{requestField}}' has some malformed expressions. Correct the values and try again.",
+            "urlPathShouldContainAlphabeticCharacters": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing alphabetic characters. Edit the URL and try again.",
+            "urlShouldContainQueryParam": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing query parameters. Edit the URL and try again.",
+            "hostnameAccessMissing": "You don't have access to all the hostnames of included test cases. Get the access or edit the hostnames and try again.",
+            "invalidConditionExpression": "The requested resource '{{requestField}}' has some invalid conditions. Verify the entered values, format, and type and try again.",
+            "customValueNotSupported": "Invalid condition statement. You can only use default available values for this condition. Use the condition template to create a valid condition and try again.",
+            "dataTypeMismatch": "The value of a variable in condition doesn't match the expected data type of the condition. Verify the entered condition and the value and try again.",
+            "maxAssociationsExceeded": "The number of test cases in this test suite exceeded the limit of '{{maxLimit}}'. Create a new test suite for test cases exceeding the limit.",
+            "testRequestClientProfileLimitExceeded": "The number of test request client profiles in this test suite exceeded the limit of '{{maxLimit}}'. Create a new test suite for client profiles exceeding the limit."
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "manageTestSuite": "Updating test suite"
+            },
+            "display": {
+              "manageTSSuccess": "Test suite '%s' edited"
+            }
+          }
+        },
+        "view": {
+          "short": "Returns details of a specific test suite.",
+          "long": "This command returns details of a test suite with a specific ID: test suite overview, included test cases, and association to a property version.",
+          "id": "Unique identifier of the test suite you want to get the details of. Run the 'test-suite list' command to get this value. Provide one of these flags, either '--id' or '--name'.",
+          "name": "Name of the test suite you want ot get the details of. Run the 'test-suite list' command to get this value. Provide one of these flags, either '--name' or '--id'.",
+          "groupBy": "Optional. Specifies the grouping of included cases. Available values are: 'condition', 'test-request', or 'ipversion'.",
+          "hostnameAccessMissing": "You don't have access to all the hostnames of included test cases. Those test cases are hidden.",
+          "flag": {
+            "missing": {
+              "any": "Missing one of the required flags, either '--id' or '--name'. Add the flag and try again."
+            },
+            "invalid": {
+              "id": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again.",
+              "groupBy": "Invalid '--group-by' flag value. Available values are: 'condition', 'test-request', or 'ipversion'. Correct the input and try again."
+            }
+          },
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to view the test suites. Contact your Account administrator."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to verify the ID and try again.",
+            "validationError": {
+              "resourceInDeletedState": "You can't view this test suite because it's in the deleted state. Restore it and try again.",
+              "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this."
+            }
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "getTestSuite": "Getting test suite",
+              "testSuiteWithChildObject": "Getting test suite with child objects"
+            },
+            "display": {
+              "testSuiteDetails": "TEST SUITE DETAILS",
+              "noTestSuiteFoundWithName": "No test suite found with the name '%s'",
+              "noTestSuiteFoundWarning": "No test suites found",
+              "testCaseHeader": "INCLUDED TEST CASES",
+              "noTestCaseWarning": "No test cases found for the test suite."
+            }
+          }
+        },
+        "remove": {
+          "short": "Removes a specific test suite.",
+          "long": "This command removes a test suite with a specific ID. You can restore removed test suites for 30 days since their removal.",
+          "id": "Unique identifier for the test suite you want to remove. To get this value, run the 'test-suite list' command. You need to provide either this flag or '--name'.",
+          "name": "Name of the test suite. To get this value, run the 'test-suite list' command. You need to provide either this flag or '--id'.",
+          "flag": {
+            "missing": {
+              "any": "Missing one of the required flags, either '--id' or '--name'. Add the flag and try again."
+            },
+            "invalid": {
+              "id": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again."
+            }
+          },
+          "read": {
+            "authorizationError": {
+              "userIsNotOwner": "Only test suite's owners can perform this action.",
+              "userIsNotOwnerOrEditor": "You don't have the edit access to this test suite. Request the edit access and try again once your request is approved."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to make sure the ID is correct and try again.",
+            "validationError": {
+              "resourceInDeletedState": "Resource was removed. Restore it and try again."
+            }
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "getTestSuite": "Getting test suite",
+              "removeTestSuite": "Removing test suite"
+            },
+            "display": {
+              "removeTSSuccess": "Test suite removed. You can restore using the command ",
+              "removeTSSuccessInBold": "akamai test-center test-suite restore --id %v",
+              "removeTSSuccessEnd": " within 30 days.",
+              "testSuiteDetails": "TEST SUITE DETAILS",
+              "noTestSuiteFoundWithName": "No test suite found with the name '%s'",
+              "noTestSuiteFoundWarning": "No test suites found"
+            }
+          }
+        },
+        "restore": {
+          "short": "Restores a test suite with a specific ID.",
+          "long": "This command restores a test suite with a specific ID. You can restore removed test suites for 30 days since their removal.",
+          "id": "Unique identifier for the test suite you want to remove. To get this value, run the 'test-suite list' command. You need to provide either this flag or '--name'.",
+          "name": "Name of the test suite. To get this value, run the 'test-suite list' command. You need to provide either this flag or '--id'.",
+          "flag": {
+            "missing": {
+              "any": "Missing one of the required flags, either '--id' or '--name'. Provide all required data and try again."
+            },
+            "invalid": {
+              "id": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again."
+            }
+          },
+          "read": {
+            "authorizationError": {
+              "userIsNotOwner": "Only test suite's owners can perform this action.",
+              "userIsNotOwnerOrEditor": "You don't have the edit access to this test suite. Request the edit access and try again once your request is approved."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to verify the ID and try again.",
+            "validationError": {
+              "resourceNotInDeletedState": "Resource is not in the deleted state. Run the 'test-suite view' command to check its details."
+            }
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "getTestSuite": "Getting test suite",
+              "restoreTestSuite": "Restoring test suite"
+            },
+            "display": {
+              "restoreTSSuccess": "Test suite restored",
+              "testSuiteDetails": "TEST SUITE DETAILS",
+              "noTestSuiteFoundWithName": "No test suite found with the name '%s'",
+              "noTestSuiteFoundWarning": "No test suites found"
+            }
+          }
+        },
+        "addTestCase": {
+          "short": "Adds a functional test case to a specific test suite.",
+          "long": "This command adds a functional test case to a test suite with a specific ID.",
+          "testSuiteId": "Unique identifier for the test suite you want to add test cases to. To get this value, run the 'test-suite list' command. You need to provide either this flag or '--test-suite-name'.",
+          "testSuiteName": "Name of the test suite you want to add test cases to. You need to provide either this flag or '--test-suite-id'.",
+          "url": "Fully qualified URL of the resource to test, for example 'https://example.com/'.",
+          "addHeader": "Optional. Header to be added to the request in the format: 'name: value'.",
+          "modifyHeader": "Optional. Existing header to be modified in the request in the format: 'name: value'.",
+          "filterHeader": "Optional. Existing header to be filtered out from the request, specified as 'name'.",
+          "condition": "Condition statement from the list of supported conditions with entered required values. To get the list of supported conditions, run the 'conditions' command. Make sure to substitute default values in '\" \"' with your own. Examples: 'Content provider code is \"12345\"' or 'Origin server - Cache key hostname is \"www.example.com\"'.",
+          "ipVersion": "Optional. IP version to execute the test case over, either 'v4' or 'v6'. It's set to 'v4' by default.",
+          "flag": {
+            "missing": {
+              "any": "Missing at least one of the required flags,'--test-suite-id' or '--test-suite-name', '--url', '--condition'. Provide all required data and try again."
+            },
+            "invalid": {
+              "testSuiteId": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again.",
+              "ipVersion": "Invalid IP version value. Available values are 'v4' or 'v6'. Correct the input and try again.",
+              "addHeader": "Invalid '--add-header' flag value. Make sure it follows the 'name: value' format and try again.",
+              "modifyHeader": "Invalid --modify-header flag value. Make sure it follows the 'name: value' format and try again."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "getTestSuite": "Getting test suite",
+              "addTestCase": "Adding test case to test suite"
+            },
+            "display": {
+              "addTestCaseSuccess": "Test cases added to '%s' test suite",
+              "addTestCaseFail": "Failed to add test case to '%s' test suite",
+              "addTestCaseNoTestSuite": "Failed to add test case. The '%s' test suite could not be found."
+            }
+          },
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to view test suites. Contact your Account administrator."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to make sure the ID is correct and try again.",
+            "validationError": {
+              "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this."
+            }
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Write permission, which is required to access the test suites. Contact your Account administrator.",
+            "userIsNotOwnerOrEditor": "You don't have the edit access to the test suite. Request the edit access and try again once your request is approved.",
+            "hostnameAccessMissingForAssociatedTestCases": "You don't have access to hostnames of at least one test case included in the test suite. Get the access or edit the hostnames and try again."
+          },
+          "invalidRequestBody": "Invalid request. Correct the input following examples and try again.",
+          "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to make sure the ID is correct and try again.",
+          "duplicateResourceInPayload": "The requested header names have some duplicates. Remove the duplicates and try again.",
+          "hostnameAccessMissing": "You don't have access to hostnames of at least one test case included in the test suite. Those test cases are hidden. Get the access or edit the hostnames and try again.",
+          "urlShouldContainPath": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing a path. Edit the URL and try again.",
+          "urlPathShouldContainAlphabeticCharacters": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing alphabetic characters. Edit the URL and try again.",
+          "urlShouldContainQueryParam": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing query parameters. Edit the URL and try again.",
+          "dataTypeMismatch": "The value of a variable in condition doesn't match the expected data type of the condition. Verify the entered condition and the value and try again.",
+          "invalidConditionExpression": "The condition is invalid. Verify the entered values, format, and type and try again.",
+          "customValueNotSupported": "Invalid condition statement. You can only use default available values for this condition. Use the condition template to create a valid condition and try again.",
+          "entityAlreadyExists": "Such test case already exists.",
+          "invalidValue": "The '{{requestField}}' is invalid or it's an empty string. Correct your input and try again.",
+          "validationError": {
+            "invalidValue": "The URL is invalid or it's an empty string. Correct your input and try again.",
+            "resourceInDeletedState": "You can't add test cases to this test suite because it's in the deleted state. Restore it and try again.",
+            "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this.",
+            "maxAssociationsExceeded": "The number of test cases in this test suite exceeded the limit of '{{maxLimit}}'. Create a new test suite for test cases exceeding the limit.",
+            "clientProfileOfExistingAssociatedTestCasesDoNotMatch": "The test suite to which you are trying to add test cases is stateful. It accepts only test cases with the same client profile as test cases already included in the test suite. Change the test cases or add it to a different test suite.",
+            "testCasesContainsHeterogeneousClientProfiles": "In stateful test suites, test cases need to have the same client profile. Edit the test cases and try again."
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          }
+        },
+        "removeTestCase": {
+          "short": "Removes a test case from a test suite with a specific ID.",
+          "long": "This command removes a specific test case from a test suite with a specific ID.",
+          "testSuiteId": "Unique identifier for the test suite you want to remove the test case from. To get this value, run the 'test-suite list' command.",
+          "orderNum": "Order number of the test case you want to remove. To get this value, run the 'test-suite view' command for the specific test suite ID.",
+          "success": "Test case removed from '%s' test suite",
+          "notPresent": "The test case with the order number '%s' can't be found. Run the 'test-suite view' command for the specific test suite ID to check included test cases and try again.",
+          "failed": "Failed to remove the test case from '%s' test suite . Try again.",
+          "flag": {
+            "missing": {
+              "any": "Missing at least one of the required flags, '--test-suite-id' and '--order-num'. Provide all required data and try again."
+            },
+            "invalid": {
+              "testSuiteId": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again.",
+              "orderNum": "Invalid order number value. It needs to be a number. Run the 'test-suite view' command for the specific test suite ID to check test cases' order number and try again."
+            }
+          },
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to remove test cases. Contact your Account administrator."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to make sure the ID is correct and try again.",
+            "validationError": {
+              "resourceInDeletedState": "You can't remove test cases from this test suite because it's in the deleted state. Restore it and try again.",
+              "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this."
+            }
+          },
+          "authorizationError": {
+            "requiredPermissionMissing": "You don't have the Write permission, which is required to access the test suites. Contact your Account administrator.",
+            "userIsNotOwnerOrEditor": "You don't have the edit access to the test suite. Request the edit access and try again once your request is approved.",
+            "hostnameAccessMissingForAssociatedTestCases": "You don't have access to hostnames of at least one test case included in the test suite. Get the access or edit the hostnames and try again."
+          },
+          "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to make sure the ID is correct and try again.",
+          "resourceInDeletedState": "You can't remove test cases from this test suite because they are in the deleted state. Restore the whole test suite and try again.",
+          "testRunsInProgress": "You can't remove test cases involved in a test run in progress. Wait until the test run is complete and try again.",
+          "associationNotFound": "Test cases you're trying to remove are not included in this test suite. Run the 'test-suite view' command for the test suite ID to check included test cases.",
+          "validationError": {
+            "resourceInDeletedState": "You can't remove test cases from this test suite because the test suite is in the deleted state. Restore it and try again.",
+            "testRunsInProgress": "You can't remove the test case involved in a test run in progress. Wait until the test run is complete and try again.",
+            "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this."
+          },
+          "subCommand": {
+            "invalid": {
+              "argumentPassed": "unknown command %q for %q."
+            }
+          },
+          "messages": {
+            "spinner": {
+              "getTestSuite": "Getting test suite",
+              "getTestCases": "Getting test cases",
+              "removeTestCase": "Removing test case from test suite"
+            }
+          }
+        },
+        "subCommand": {
+          "missing": {
+            "noArgumentPassed": "enter a valid subcommand for %q."
+          },
+          "invalid": {
+            "wrongArgumentPassed": "unknown command %q for %q.%s"
+          }
+        }
+      },
+      "test": {
+        "short": "Runs a test for a test suite, single test case, or a property version.",
+        "long": "This command runs a test for a specific object. You can run the test for one of the following: a test suite with a specific ID or name, a property version with specific property name and version number, or a combination of URL, condition, and IP version.",
+        "testSuiteId": "Unique identifier for the test suite you want to run the test for. To get this value, run the 'test-suite list' command. You need to provide either this flag or '--test-suite-name'.",
+        "testSuiteName": "Name of the test suite you want to run the test for. You need to provide either this flag or '--test-suite-id'.",
+        "url": "Fully qualified URL of the resource to test, for example 'https://example.com/'. This flag needs to be combined with '--ipversion' and '--condition' flags.",
+        "addHeader": "Optional. Header to be added to the request in the format: 'name: value'. This flag needs to be combined with '--url', '--ipversion' and '--condition' flags.",
+        "modifyHeader": "Optional. Existing header to be modified in the request in the format: 'name: value'. This flag needs to be combined with '--url', '--ipversion' and '--condition' flags.",
+        "filterHeader": "Optional. An existing header to be filtered out from the request, specified as 'name'. This is an optional flag that you can use together with the --url flag.",
+        "condition": "Condition statement from the list of supported conditions with entered required values. To get the list of supported conditions, run the 'conditions' command. Make sure to substitute default values in '\" \"' with your own. Examples: 'Content provider code is \"12345\"' or 'Origin server - Cache key hostname is \"www.example.com\"'. This flag needs to be combined with '--ipversion' and '--url' flags.",
+        "ipVersion": "IP version to execute the test case over, either 'v4' or 'v6'. This flag needs to be combined with '--ipversion' and '--condition' flags.",
+        "property": "Property name you want to run the test for, for example 'example.com'. This flag needs to be combined with the '--propver' flag.",
+        "propver": "Property version you want to run the test for, , for example '4'. This flag needs to be combined with the '--property' flag.",
+        "env": "Target environment you want to run the test on, either 'staging' or 'production'.",
+        "testSuiteNameNotFound": "The test suite with the name '%s' could not be found. Run the 'test-suite list' command to get this value and try again.",
+        "testCasesNotFound": "The test suite has no test cases included. Add test cases to it and try again.",
+        "propertyVersionNotFound": "The requested property name and version could not be found. Make sure the value is correct and try again.",
+        "propertyVersionTestSuitesNotFound": "The requested property version is not associated to any test suites.",
+        "noTestCases": "No test cases to run. Make sure that the property version is associated to test suites that include test cases in them and try again.",
+        "flag": {
+          "missing": {
+            "flagOrJsonImport": "Missing required flags or JSON input. Correct the input following examples and try again.",
+            "any": "Missing required flags. To run the test for a test suite provide '--test-suite-id' or '--test-suite-name'. To run a test for a property version provide '--property' and '--propver'. To run a test for a single test case provide '--url', '--ipversion' and '--condition' flags.",
+            "condition": "Missing the required '--condition' flag. Correct the input and try again.",
+            "url": "Missing required '--url' flag. Correct the input and try again.",
+            "propertyVersion": "Missing required '--property' and '--propver' flags. Correct the input and try again."
+          },
+          "invalid": {
+            "id": "Invalid test suite ID value. It needs to be a number. To get this value, run the 'test-suite list' command. Correct the input and try again.",
+            "propertyVersion": "Invalid '--property' or '--propver' flag value. Enter a valid property name and its version and try again. Example: --property 'example.com'  --propver '4'",
+            "ipVersion": "Invalid IP version value. Available values are 'v4' or 'v6'. Correct the input and try again.",
+            "addHeader": "Invalid '--add-header' flag value. Make sure it follows the 'name: value' format and try again.",
+            "modifyHeader": "Invalid '--modify-header' flag value. Make sure it follows the 'name: value' format and try again.",
+            "targetEnvironment": "Invalid target environment value. Available values are 'staging' or 'production'. Correct the input and try again.",
+            "exclusive": "Invalid request due to incorrect combination of flags. To run the test for a test suite provide '--test-suite-id' or '--test-suite-name'. To run a test for a property version provide '--property' and '--propver'. To run a test for a single test case provide '--url', '--ipversion' and '--condition' flags. Correct the input following examples and try again."
+          }
+        },
+        "subCommand": {
+          "invalid": {
+            "argumentPassed": "unknown command %q for %q."
+          }
+        },
+        "messages": {
+          "spinner": {
+            "getTestSuite": "Getting test suite"
+          },
+          "testSuiteId": {
+            "spinner": {
+              "findTestCases": "Finding test cases",
+              "startTestRun": "Running test suite",
+              "runTests": "Running tests"
+            }
+          },
+          "testSuiteName": {
+            "spinner": {
+              "findTestCases": "Finding test cases",
+              "startTestRun": "Running test suite",
+              "runTests": "Running tests"
+            }
+          },
+          "propertyVersion": {
+            "spinner": {
+              "findTestSuite": "Finding test suites",
+              "findTestCases": "Finding test cases",
+              "findPropertyVersion": "Finding property version",
+              "startTestRun": "Running property version",
+              "runTests": "Running tests"
+            }
+          },
+          "singleTestCase": {
+            "spinner": {
+              "startTestRun": "Running test case",
+              "runTests": "Running tests"
+            }
+          },
+          "jsonInput": {
+            "spinner": {
+              "startTestRun": "Running from JSON input",
+              "runTests": "Running tests"
+            }
+          },
+          "display": {
+            "completed": "Completed",
+            "completedNotAsExpected": "Completed, some results not as expected",
+            "failed": "Failed",
+            "testRunHeader": "TEST SUMMARY",
+            "testRunStart": "Test run started.",
+            "testSuiteText": "Test Suite ",
+            "testCases": "%d test cases - ",
+            "passedText": "%d passed",
+            "failedText": "%d failed",
+            "systemErrorText": "%d system errors"
+          }
+        },
+        "testSuite": {
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to access the test suite. Contact your Account administrator."
+            },
+            "validationError": "The '{{requestField}}' is missing for property."
+          }
+        },
+        "testCase": {
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to access the test cases. Contact your Account administrator."
+            },
+            "resourceNotFound": "The test suite with this ID could not be found. Run the 'test-suite list' command to make sure the ID is correct and try again.",
+            "validationError": {
+              "resourceInDeletedState": "The test suite is in the deleted state. Restore it and try again.",
+              "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this."
+            }
+          }
+        },
+        "configVersions": {
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to get the property version. Contact your Account administrator."
+            },
+            "resourceNotFound": "The property version could not be found. Make sure the values are correct and try again."
+          }
+        },
+        "testRun": {
+          "create": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Write permission, which is required to run the test. Contact your Account administrator.",
+              "hostnameAccessMissing": "You don't have access to hostnames of at least one test case included in the test suite. Get the access or edit the hostnames and try again.",
+              "hostnameAccessMissingForAssociatedTestCases": "You don't have access to hostnames of at least one test case included in the test suite. Get the access or edit the hostnames and try again."
+            },
+            "validationError": {
+              "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this.",
+              "invalidTestRunObjectsCombination": "Invalid request due to incorrect combination of flags. To run the test for a test suite provide '--test-suite-id' or '--test-suite-name'. To run a test for a property version provide '--property' and '--propver'. To run a test for a single test case provide '--url', '--ipversion' and '--condition' flags. Correct the input following examples and try again.",
+              "maxTestCasesPerTestRunExceeded": "The number of test cases in this test run exceeded the limit of '{{maxLimit}}'. Create another test suite for test cases exceeding the limit and submit another request.",
+              "maxTestSuitesPerTestRunExceeded": "The number of test suites in this test run exceeded the limit of '{{maxLimit}}'. Submit another request for the test suites exceeding the limit.",
+              "configVersionNotActive": "The property version is not active on the selected environment. Activate it in Property Manager or select a different environment and try again.",
+              "requiredFieldMissing": "The '{{field}}' property is missing.",
+              "invalidValue": "The '{{field}}' property is invalid. Correct the value and try again.",
+              "maxLengthExceeded": "The '{{field}}' property exceeds the allowed characters limit of '{{maxLength}}'.",
+              "hostnameAccessMissing": "You don't have access to the hostname. Correct the value and try again.",
+              "urlShouldContainPath": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing a path. Edit the URL and try again.",
+              "urlPathShouldContainAlphabeticCharacters": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing alphabetic characters. Edit the URL and try again.",
+              "urlShouldContainQueryParam": "Failed to create a test case for the 'Ignore case in cache key' condition. The URL is missing query parameters. Edit the URL and try again.",
+              "dataTypeMismatch": "The value of a variable in condition doesn't match the expected data type of the condition. Verify the entered condition and the value and try again.",
+              "invalidConditionExpression": "This condition is invalid. Verify the entered values, format, and type and try again.",
+              "customValueNotSupported": "Invalid condition statement. You can only use default available values for this condition. Use the condition template to create a valid condition and try again.",
+              "resourceNotFound": {
+                "testRequestIdResourceNotFound": "Some of the test requests (combinations of the URL and headers) you included in the test run can't be found. Verify the included objects and try again.",
+                "conditionIdResourceNotFound": "Some of the conditions you included in the test run can't be found. Verify the included objects and try again.",
+                "requirementIdResourceNotFound": "Some of the requirements you included in the test run can't be found. Verify the included objects and try again.",
+                "testSuiteIdResourceNotFound": "Some of the test suites you included in the test run can't be found. Verify the included objects and try again.",
+                "testCaseIdResourceNotFound": "Some of the functional test cases you included in the test run can't be found. Verify the included objects and try again.",
+                "configVersionIdResourceNotFound": "Some of the property versions you included in the test run can't be found. Verify the included objects and try again.",
+                "clientProfileIdResourceNotFound": "Some of the client profiles you included in the test run can't be found. Verify the included objects and try again.",
+                "testDefinitionIdResourceNotFound": "Some of the test definitions you included in the test run can't be found. Verify the included objects and try again."
+              },
+              "resourceInDeletedState": {
+                "testRequestIdResourceInDeletedState": "Some of the test requests (combinations of URL and headers) are removed and you can't include them in the test run. Verify the included objects and try again.",
+                "conditionIdResourceInDeletedState": "Some of the conditions are removed and you can't include them in the test run. Verify the included objects and try again.",
+                "requirementIdResourceInDeletedState": "Some of the requirements are removed and you can't include them in the test run. Verify the included objects and try again.",
+                "testSuiteIdResourceInDeletedState": "Some of the test suites are removed and you can't include them in the test run. Verify the included objects and try again.",
+                "testCaseIdResourceInDeletedState": "Some of the test cases are removed and you can't include them in the test run. Verify the included objects and try again.",
+                "configVersionIdResourceInDeletedState": "Some of the property versions are removed and you can't include them in the test run. Verify the included objects and try again.",
+                "testDefinitionIdResourceInDeletedState": "Some of the test definitions are removed and you can't include them in the test run. Verify the included objects and try again."
+              },
+              "associationNotFound": {
+                "requirementIdTestSuiteIdAssociationNotFound": "Some of the requirements and test suites associations could not be found. Verify the associations and try again.",
+                "configVersionIdTestSuiteIdAssociationNotFound": "Some of the property versions and test suites associations could not be found. Verify the associations and try again.",
+                "testSuiteIdTestCaseIdAssociationNotFound": "Some of the test suites and test cases associations could not be found. Verify the associations and try again."
+              }
+            },
+            "rateLimitExceeded": {
+              "rateLimitTestRunHostnameExceeded": "The number of test runs for a hostname exceeded the rate limit. Try again later."
+            },
+            "invalidRequestBody": "Invalid request. Correct the input following examples and try again."
+          },
+          "read": {
+            "authorizationError": {
+              "requiredPermissionMissing": "You don't have the Read permission, which is required to get the results of the test run. Contact your Account administrator."
+            },
+            "resourceNotFound": "The test run with this ID could not be found. Make sure the ID is correct and try again.",
+            "validationError": {
+              "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this."
+            }
+          }
+        }
+      },
+      "messages": {
+        "display": {
+          "standardInputErrorMsg": "Error occurred while reading the standard input. Error : %v"
+        }
+      }
+    }
+  }
+}
