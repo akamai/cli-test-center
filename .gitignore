@@ -1,0 +1,14 @@
+.DS_Store
+
+akamai-test-center
+akamai-test-center.exe
+
+cli-test-center
+cli-test-center.exe
+
+test-center
+test-center.exe
+
+build/
+/.idea/
+tc
