@@ -1,4 +1,4 @@
-#Test Center CLI
+# Test Center CLI
 
 - [Get started with the Test Center CLI](#get-started-with-the-test-center-cli)
   - [Install Test Center CLI](#install-test-center-cli)
