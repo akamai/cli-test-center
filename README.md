@@ -1,4 +1,4 @@
-#Test Center CLI
+# Test Center CLI
 
 - [Get started with the Test Center CLI](#get-started-with-the-test-center-cli)
   - [Install Test Center CLI](#install-test-center-cli)
@@ -45,32 +45,32 @@ Test Center is a testing tool that checks the effect of configuration changes on
 
 To install this CLI, you need the [Akamai CLI](https://github.com/akamai/cli) package manager. Once you install the Akamai CLI, run this command:
 
-`akamai install test-center` 
+`akamai install test-center`
 
 ## Stay up to date
 
-To make sure you always use the latest version of the CLI, run this command:  
+To make sure you always use the latest version of the CLI, run this command:
 
-`akamai update test-center`  
+`akamai update test-center`
 
 ## API credentials
 Akamai-branded packages use a `.edgerc` file for standard EdgeGrid authentication. By default, CLI looks for credentials in your `$HOME` directory.
 
-You can override both the file location and the credentials section by passing the [--edgerc](#edgerc) or [--section](#section) flags to each command.
+You can override both the file location and the credential section by passing the [--edgerc](#edgerc) or [--section](#section) flags to each command.
 
 To set up your `.edgerc` file, see [Get started with APIs](https://techdocs.akamai.com/developer/docs/set-up-authentication-credentials#add-credential-to-edgerc-file).
 
 # Concepts
 
-- **Test suite**. Test suites act as containers for test cases. You can add a name and description to a test suite to provide more details about the test suite and included test cases. You can also set if the test suite needs to be locked or stateful. Test suites can be tested as test objects associated with a property version or on their own. 
-  
+- **Test suite**. Test suites act as containers for test cases. You can add a name and description to a test suite to provide more details about the test suite and included test cases. You can also set if the test suite needs to be locked or stateful. Test suites can be tested as test objects associated with a property version or on their own.
+
 - **Locked test suite**. Locked test suites can be modified only by their editors and owners. Test Center users who create locked test suites automatically become their owners. Owners can designate owners or editors and other users can request edit access. To learn how, see [Give the edit access to a locked test suite](https://techdocs.akamai.com/test-ctr/docs/test-suite-edit-access).
 
 - **Stateful test suite**. Stateful test suites are test suites within which test cases are executed based on the order number defined for each test case. Cookies and session information are retained for subsequent test cases.
 
 - **Functional test case**. A test case in functional testing is the smallest unit of testing. It includes all settings for which the test needs to be run: conditions, test requests, and IP versions.
-  
-- **Property version**. Property version refers to a Property Manager property version. 
+
+- **Property version**. Property version refers to a Property Manager property version.
 
 - **Test results**. A test result for functional testing is a comparison of the expected value with the actual value. It can be either *Passed* or *Failed*. *Passed* means that the *Expected* result of the test was the same as the *Actual* result. *Failed* means that the *Expected* result of the test was different from the *Actual* result. To learn more about Functional testing results, see [Test results concepts](https://techdocs.akamai.com/test-ctr/docs/results-concepts) and [How to read test run results](https://techdocs.akamai.com/test-ctr/docs/view-results#functional-testing).
 
@@ -79,14 +79,14 @@ To set up your `.edgerc` file, see [Get started with APIs](https://techdocs.akam
 There are three ways you can use this CLI.
 
 ## Run a test
-You can run a test for a property version, test suite, or test case using a [CLI command](#run-a-test) or [JSON input](#run-a-test-using-json). 
+You can run a test for a property version, test suite, or test case using a [CLI command](#run-a-test-1) or [JSON input](#run-a-test-using-json).
 
-## Manage Test Center objects using JSON 
+## Manage Test Center objects using JSON
 Here are the commands supporting JSON input:
   - [Generate a default test suite for a property](#generate-a-default-test-suite-for-a-property). Generates a default test suite for a property version for you to [import](#import-a-test-suite).
-  - [Import a test suite](#import-a-test-suite). Imports to Test Center a test suite with test cases, variables, and property version association. 
+  - [Import a test suite](#import-a-test-suite). Imports to Test Center a test suite with test cases, variables, and property version association.
   - [Get a test suite's details](#get-a-test-suites-details). Fetches, or exports, test suite's details that you can save and import on a different account or [edit](#edit-a-test-suite-using-json). You can also use this operation to clone test suites within your account.
-  - [Edit a test suite using JSON](#edit-a-test-suite-using-json). 
+  - [Edit a test suite using JSON](#edit-a-test-suite-using-json).
   - [Run a test using JSON](#run-a-test-using-json).
 
 ## Manage Test Center objects using granular commands
@@ -110,7 +110,7 @@ The `help` command returns an overview of available commands and flags.
 
 ## List test suites
 The `test-suite list` command lists all test suites. You can filter the results for test suites created by a user, a property the test suite is associated with, or a string from the test suite's name or description.
-The list also includes also the recently deleted test suites that you can restore.
+The list also includes the recently deleted test suites that you can restore.
 
 
 **Command**: `test-suite list [--property 'PROPERTY NAME'] [--propver 'PROPERTY VERSION'] [-user USERNAME] [--search STRING]`, where:
@@ -133,10 +133,10 @@ The `test-suite add` command creates a new test suite.
 
 **Command**: `test-suite add --name NAME [--description DESCRIPTION] [--unlocked] [--stateful]  [--property 'PROPERTY NAME' --propver 'PROPERTY VERSION']`, where:
 
-- `NAME` is the name of the test suite. 
+- `NAME` is the name of the test suite.
 - `DESCRIPTION` is the description for the test suite. The `--description` flag is optional.
-- the `--unlocked` flag unlocks the test suite. This flag is optional. By default all test suites are [locked](#concepts).
-- the `--stateful` flag makes the test suite stateful. This flag is optional. By default all test suites are [stateless](#concepts). 
+- the `--unlocked` flag unlocks the test suite. This flag is optional. By default, all test suites are [locked](#concepts).
+- the `--stateful` flag makes the test suite stateful. This flag is optional. By default, all test suites are [stateless](#concepts).
 - the `--property` and `--propver` flags associate the test suite with a specific property version. `PROPERTY NAME` is the name of the property in Property Manager and `PROPERTY VERSION`, its appropriate version. You can use [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation to get these values. These flags are optional, but they need to be used together. 
 
 **Examples**:
