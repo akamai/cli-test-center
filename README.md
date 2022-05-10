@@ -1,4 +1,4 @@
-# Test Center CLI
+# Test Center CLI (Beta)
 
 - [Get started with the Test Center CLI](#get-started-with-the-test-center-cli)
   - [Install Test Center CLI](#install-test-center-cli)
@@ -29,6 +29,7 @@
   - [edgerc](#edgerc)
   - [section](#section)
   - [account-key](#account-key)
+  - [force-color](#force-color)
   - [help](#help-1)
   - [version](#version)
   - [json](#json)
