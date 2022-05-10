@@ -84,25 +84,25 @@ You can run a test for a property version, test suite, or test case using a [CLI
 
 ## Manage Test Center objects using JSON
 Here are the commands supporting JSON input:
-  - [Generate a default test suite for a property](#generate-a-default-test-suite-for-a-property). Generates a default test suite for a property version for you to [import](#import-a-test-suite).
-  - [Import a test suite](#import-a-test-suite). Imports to Test Center a test suite with test cases, variables, and property version association.
-  - [Get a test suite's details](#get-a-test-suites-details). Fetches, or exports, test suite's details that you can save and import on a different account or [edit](#edit-a-test-suite-using-json). You can also use this operation to clone test suites within your account.
-  - [Edit a test suite using JSON](#edit-a-test-suite-using-json).
-  - [Run a test using JSON](#run-a-test-using-json).
+- [Generate a default test suite for a property](#generate-a-default-test-suite-for-a-property). Generates a default test suite for a property version for you to [import](#import-a-test-suite).
+- [Import a test suite](#import-a-test-suite). Imports to Test Center a test suite with test cases, variables, and property version association.
+- [Get a test suite's details](#get-a-test-suites-details). Fetches, or exports, test suite's details that you can save and import on a different account or [edit](#edit-a-test-suite-using-json). You can also use this operation to clone test suites within your account.
+- [Edit a test suite using JSON](#edit-a-test-suite-using-json).
+- [Run a test using JSON](#run-a-test-using-json).
 
 ## Manage Test Center objects using granular commands
 Here are the commands you can use to manage Test Center objects from the CLI:
 
-  - [List test suites](#list-test-suites).
-  - [Create a test suite](#create-a-test-suite).
-  - [Add a test case to a test suite](#add-a-test-case-to-a-test-suite).
-  - [Edit a test suite](#edit-a-test-suite).
-  - [Remove a test suite](#remove-a-test-suite).
-  - [Remove a test case from a test suite](#remove-a-test-case-from-a-test-suite).
-  - [Restore a test suite](#restore-a-test-suite).
-  - [Get a test suite's details](#get-a-test-suites-details).
-  - [List supported conditions](#list-supported-conditions).
-  - [Run a test](#run-a-test).
+- [List test suites](#list-test-suites).
+- [Create a test suite](#create-a-test-suite).
+- [Add a test case to a test suite](#add-a-test-case-to-a-test-suite).
+- [Edit a test suite](#edit-a-test-suite).
+- [Remove a test suite](#remove-a-test-suite).
+- [Remove a test case from a test suite](#remove-a-test-case-from-a-test-suite).
+- [Restore a test suite](#restore-a-test-suite).
+- [Get a test suite's details](#get-a-test-suites-details).
+- [List supported conditions](#list-supported-conditions).
+- [Run a test](#run-a-test).
 
 # Available operations and commands
 
@@ -138,7 +138,7 @@ The `test-suite add` command creates a new test suite.
 - `DESCRIPTION` is the description for the test suite. The `--description` flag is optional.
 - the `--unlocked` flag unlocks the test suite. This flag is optional. By default, all test suites are [locked](#concepts).
 - the `--stateful` flag makes the test suite stateful. This flag is optional. By default, all test suites are [stateless](#concepts).
-- the `--property` and `--propver` flags associate the test suite with a specific property version. `PROPERTY NAME` is the name of the property in Property Manager and `PROPERTY VERSION`, its appropriate version. You can use [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation to get these values. These flags are optional, but they need to be used together. 
+- the `--property` and `--propver` flags associate the test suite with a specific property version. `PROPERTY NAME` is the name of the property in Property Manager and `PROPERTY VERSION`, its appropriate version. You can use [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation to get these values. These flags are optional, but they need to be used together.
 
 **Examples**:
 - `akamai test-center test-suite add --name 'new test suite'`
@@ -147,9 +147,9 @@ The `test-suite add` command creates a new test suite.
 **Expected output**: The response includes details about the created test suite. It also includes the ID of the test suite that you can use in other operations — for example, to [add a test case to a test suite](#add-a-test-case-to-a-test-suite). For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites) description.
 
 ## Import a test suite
-The `test-suite import` command imports a test suite from a JSON file or standard JSON input. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file. 
+The `test-suite import` command imports a test suite from a JSON file or standard JSON input. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
 
-**Command**: 
+**Command**:
 - To import a specific file from your computer: `test-center test-suite import < {FILE_PATH}/FILE_NAME.json`, where `FILE_PATH` and `FILE_NAME` are respectively location and name of the file to import.
 - To import an outputted string: `echo '{"testSuite":{"testSuiteName":"TEST_SUITE_NAME","testSuiteDescription":"TEST_SUITE_DESCRIPTION","locked":true | false,"stateful":true | false,"variables":[{"variableName":"VARIABLE_NAME","variableValue":"VARIABLE_VALUE"}],"testCases":[]}}' | akamai test-center test-suite import`, where `TEST_SUITE_NAME`,`TEST_SUITE_DESCRIPTION`, `VARIABLE_NAME`, and `VARIABLE_VALUE` are your values for the test suite.
 
@@ -162,14 +162,14 @@ The `test-suite import` command imports a test suite from a JSON file or standar
 ## Add a test case to a test suite
 The `test-suite add-test-case` command adds a functional test case to a specific test suite.
 
-**Command**: `test-suite add-test-case [--test-suite-id ID | --test-suite-name NAME] --url URL --condition CONDITION_STATEMENT [--ip-version v4|v6] [-a header ...] [-m header ...] [-f header ...]`, where: 
+**Command**: `test-suite add-test-case [--test-suite-id ID | --test-suite-name NAME] --url URL --condition CONDITION_STATEMENT [--ip-version v4|v6] [-a header ...] [-m header ...] [-f header ...]`, where:
 
 - `ID` or `NAME` specify the test suite you want to add the test case to. To get these values, run the [List test suites](#list-test-suites) operation. You need to provide either of these flags: `--test-suite-id` or `--test-suite-name`.
 - `URL` is the fully qualified URL of the resource to test. It needs to contain the protocol, hostname, path, and any applicable string parameters. For example *https://www.example.com*.
 - `CONDITION_STATEMENT` is one of the condition statements from the list of supported conditions with entered required values. To get the available condition statements, run the [List supported conditions](#list-supported-conditions) operation. Make sure to substitute default values in `" "` with your own.
 - the `--ip-version` flag specifies the IP version to execute the test suite over, either `v4` or `v6`. It's set to `v4` by default. This flag is optional.
 - the `--add-header` and `--modify-header` flags specify the request headers to respectively add or modify by the request. Headers should follow the format `name: value`. These flags are optional. You can also use these flags to provide Pragma headers. See [Pragma headers](https://techdocs.akamai.com/edge-diagnostics/docs/pragma-headers) for the list of supported values.
-- the `-f` flag filters the header from the request. Provide only the `name` of the header. This flag is optional. 
+- the `-f` flag filters the header from the request. Provide only the `name` of the header. This flag is optional.
 
 **Examples**:
 - `akamai test-center test-suite add-test-case --test-suite-id 1001 --url 'https://example.com/' --condition 'Response code is one of "200,201"'`
@@ -180,9 +180,9 @@ The `test-suite add-test-case` command adds a functional test case to a specific
 ## Generate a default test suite for a property
 The `test-suite generate-default` command generates a default test suite with test cases for a specific property. Based on property settings and its behaviors and the `--url` flag value, Test Center generates a test suite object with test cases and variables for you to modify and add to Test Center using the [Import a test suite](#import-a-test-suite) operation.
 
-**Command**: `test-suite generate-default --property 'PROPERTY NAME' --propver 'PROPERTY VERSION' --url URL ...`, where: 
+**Command**: `test-suite generate-default --property 'PROPERTY NAME' --propver 'PROPERTY VERSION' --url URL ...`, where:
 
-- `PROPERTY NAME` and `PROPERTY VERSION` specify the property in Property Manager you want to generate a test suite for. To get these values you can use the [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation. 
+- `PROPERTY NAME` and `PROPERTY VERSION` specify the property in Property Manager you want to generate a test suite for. To get these values you can use the [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation.
 - `URL` is the fully qualified URL of the property hostname. The `--URL` flag can be used multiple times.
 
 
@@ -198,8 +198,8 @@ The `test-suite edit` command edits basic data of a specific test suite. Provide
 
 - `ID` is the identifier of the test suite you want to edit. To get this value, run the [List test suites](#list-test-suites) operation. You need to provide either of these flags: `--id` or `--name`.
 - `NAME` is the test suite's name. To get this value, run the [List test suites](#list-test-suites) operation. You need to provide either of these flags: `--name` or `--id`.
-- `DESCRIPTION` is the new description for the test suite. 
-- `--unlocked` and `--stateful` flags update the status of the test suite. 
+- `DESCRIPTION` is the new description for the test suite.
+- `--unlocked` and `--stateful` flags update the status of the test suite.
 - `--property` and `--propver` update the test suite's association to the property with a specific `PROPERTY NAME` and `PROPERTY VERSION`. If applicable, provide either these flags or `--remove-property`.
 - the `--remove-property` removes the association to a property version. If applicable, provide either this flag or `--property` and `--propver`.
 
@@ -207,11 +207,11 @@ The `test-suite edit` command edits basic data of a specific test suite. Provide
 - `akamai test-center test-suite edit --id 1001 --name 'Updated test suite'`
 - `akamai test-center test-suite edit --id 1001 --name 'Updated test suite' --description 'Test suite for example.com' --property 'example.com' --propver '4' --unlocked`
 - `akamai test-center test-suite edit --id 1001 --stateful --remove-property`
-  
+
 **Expected output**: The response returns the updated test suite. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suite) description.
 
 ## Edit a test suite using JSON
-The `test-suite manage` command uses the JSON input to edit a specific test suite. Provide the whole test suite object, together with test cases and variables, to include in Test Center. Only data provided in the latest JSON input will be saved. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file. 
+The `test-suite manage` command uses the JSON input to edit a specific test suite. Provide the whole test suite object, together with test cases and variables, to include in Test Center. Only data provided in the latest JSON input will be saved. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
 
 **Command**:
 - To edit the test suite with a specific file from your computer: `test-center test-suite manage < {FILE_PATH}/FILE_NAME.json`, where `FILE_PATH` and `FILE_NAME` are respectively location and name of the file to import.
@@ -226,11 +226,11 @@ The `test-suite manage` command uses the JSON input to edit a specific test suit
 **Expected output**: The response returns the updated test suite. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) description.
 
 ## Remove a test suite
-The `test-suite remove` command removes a specific test suite from Test Center. Test suites can be [restored](#restore-a-test-suite) for 30 days since their removal. 
+The `test-suite remove` command removes a specific test suite from Test Center. Test suites can be [restored](#restore-a-test-suite) for 30 days since their removal.
 
 **Command**: `test-suite remove [--id ID | --name NAME]`, where `ID` and `NAME` specify the test suite you want to remove. To get these values, run the [List test suites](#list-test-suites) operation. You need to provide either of these flags: `--id` or `--name`.
 
-**Example**: 
+**Example**:
 - `akamai test-center test-suite remove --name "Test suite name"`
 - `akamai test-center test-suite remove --id 12345`
 
@@ -280,29 +280,29 @@ The `conditions` command returns the list of all conditions you can use when cre
 
 **Expected output**: List of supported condition statements. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/get-test-catalog-template) description.
 
-## Run a test 
-The `test` command runs a test for a specific test suite, single test case, or a property version. 
+## Run a test
+The `test` command runs a test for a specific test suite, single test case, or a property version.
 
-**Command**: 
+**Command**:
 - To run a test for a test suite: `test [--test-suite-id ID] | [--test-suite-name 'NAME'] -e staging|production`
 - To run a test for a property version: `test [--property 'PROPERTY NAME' --propver 'PROPERTY VERSION']  -e staging|production`
-- To run a test for a single test case: `test [-u URL -c CONDITION STATEMENT -i v4|v6 [--add-header 'name: value' ...] [--modify-header 'name: value' ...] [--filter-header name ...]] -e staging|production`, where: 
+- To run a test for a single test case: `test [-u URL -c CONDITION STATEMENT -i v4|v6 [--add-header 'name: value' ...] [--modify-header 'name: value' ...] [--filter-header name ...]] -e staging|production`, where:
 
   - `ID` and `NAME` specify the test suite you want to run the test for. To get these values, run the [List test suites](#list-test-suites) operation. You need to provide either of these flags: `--id` or `--name`
-  - `PROPERTY NAME` and `PROPERTY VERSION` specify the property in Property Manager you want to run the test for. To get these values you can use the [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation. 
+  - `PROPERTY NAME` and `PROPERTY VERSION` specify the property in Property Manager you want to run the test for. To get these values you can use the [Property Manager CLI](https://github.com/akamai/cli-property-manager) and the `list-properties|lpr` operation.
   - `URL` is the fully qualified URL of the resource to test. It needs to contain the protocol, hostname, path, and any applicable string parameters — for example, *https://www.example.com*.
   - `CONDITION STATEMENT` is one of the condition statements from the list of supported conditions with entered required values. To get the list of supported conditions, run the [List supported conditions](#list-supported-conditions) operation. Make sure to replace default values in `" "` with your own.
   - the `-i` flag specifies the IP version to execute the test case over, either `v4` or `v6`. This flag is optional, set to `v4` by default.
   - the `--add-header` and `--modify-header` flags specify the request headers to respectively added or modify by the request. Headers should follow the format `name: value`. These flags are optional and accept multiple values. You can also use these flags to provide Pragma headers. See [Pragma headers](https://techdocs.akamai.com/edge-diagnostics/docs/pragma-headers) for the list of supported values.
-  - the `--filter-header` flag filters the header from the request. Provide only the `name` of the header. This flag is optional. 
+  - the `--filter-header` flag filters the header from the request. Provide only the `name` of the header. This flag is optional.
   - the `-e` flag specifies the environment you want to run the test on, either `staging` or `production`.
 
 **Expected output**: Once you submit the test run, it may take few minutes for Test Center to execute the test. To learn more about returned test results, check [How to read test run results - Functional testing](https://techdocs.akamai.com/test-ctr/docs/view-results#functional-testing). For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) description.
 
 ## Run a test using JSON
-The `test` command runs a test for a specific test suite, single test case, or a property version using a JSON file or JSON input. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file. 
+The `test` command runs a test for a specific test suite, single test case, or a property version using a JSON file or JSON input. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
 
-**Command**: 
+**Command**:
 To import a specific file from your computer: `test-center test < {FILE_PATH}/FILE_NAME.json`, where `FILE_PATH` and `FILE_NAME` are respectively location and name of the file to import.
 
 JSON example to run a test for a property version:
@@ -340,7 +340,7 @@ JSON example to run a test for a test suite:
       "testDefinitionExecutions":[
          {
             "ipVersions":[
-               
+
             ]
          }
       ]
@@ -396,7 +396,7 @@ JSON example to run a test for a single test case:
 
 You can use the following flags with all the listed commands.
 
-## edgerc 
+## edgerc
 The `--edgerc` flag changes the default path to the .edgerc file. This file contains the API credentials required to run all commands.
 Without this flag, the user's home directory is used by default.
 
@@ -409,33 +409,33 @@ The `--section` flag changes the default section name. The section name specifie
 
 **Command**: `$akamai test-center --section SECTION_NAME [command]`
 
-**Examples**: 
+**Examples**:
 - `$akamai test-center --section default test-suite list`
 - `$set AKAMAI_EDGERC_SECTION=default`
 
-## account-key 
-The `--account-key` flag changes your account. When testing your configuration, you may need to switch between different accounts. To do this, run the required operation with the `--account-key` flag followed by the account ID of your choice. 
+## account-key
+The `--account-key` flag changes your account. When testing your configuration, you may need to switch between different accounts. To do this, run the required operation with the `--account-key` flag followed by the account ID of your choice.
 
 **Command**: `$akamai test-center ----account-key ACCOUNT KEY [command]`
 
 **Example**: `akamai test-center --account-key 1-1TJZFB test-suite list`
 
-##force-color
+## force-color
 The `--force-color` flag forces color to non-TTY output.
 
 ## help
-The `--help` flag returns help for a command. 
+The `--help` flag returns help for a command.
 
 ## version
 The `--version` flag returns the version.
 
 ## json
-The `--json` flag returns the information in JSON format. 
+The `--json` flag returns the information in JSON format.
 
 
 # Windows 10 2018 version
-If you're using Windows 10, 2018 version and you're having problems running the Test Center 
-CLI, we recommend you try the following workaround. In the downloaded repository, add the `.exe` 
+If you're using Windows 10, 2018 version and you're having problems running the Test Center
+CLI, we recommend you try the following workaround. In the downloaded repository, add the `.exe`
 suffix to the `akamai-test-center` executable file.
 
 # Notice
