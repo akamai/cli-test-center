@@ -1,4 +1,4 @@
-# Test Center CLI (Beta)
+# Test Center CLI (Beta)<!-- omit in toc -->
 
 - [Get started with the Test Center CLI](#get-started-with-the-test-center-cli)
   - [Install Test Center CLI](#install-test-center-cli)
@@ -33,6 +33,7 @@
   - [help](#help-1)
   - [version](#version)
   - [json](#json)
+- [Exit codes](#exit-codes)
 - [Windows 10 2018 version](#windows-10-2018-version)
 - [Notice](#notice)
 
@@ -50,9 +51,9 @@ To install this CLI, you need the [Akamai CLI](https://github.com/akamai/cli) pa
 
 ## Stay up to date
 
-To make sure you always use the latest version of the CLI, run this command:
+To make sure you always use the latest version of the CLI, run this command:  
 
-`akamai update test-center`
+`akamai update test-center`  
 
 ## API credentials
 Akamai-branded packages use a `.edgerc` file for standard EdgeGrid authentication. By default, CLI looks for credentials in your `$HOME` directory.
@@ -84,25 +85,25 @@ You can run a test for a property version, test suite, or test case using a [CLI
 
 ## Manage Test Center objects using JSON
 Here are the commands supporting JSON input:
-- [Generate a default test suite for a property](#generate-a-default-test-suite-for-a-property). Generates a default test suite for a property version for you to [import](#import-a-test-suite).
-- [Import a test suite](#import-a-test-suite). Imports to Test Center a test suite with test cases, variables, and property version association.
-- [Get a test suite's details](#get-a-test-suites-details). Fetches, or exports, test suite's details that you can save and import on a different account or [edit](#edit-a-test-suite-using-json). You can also use this operation to clone test suites within your account.
-- [Edit a test suite using JSON](#edit-a-test-suite-using-json).
-- [Run a test using JSON](#run-a-test-using-json).
+  - [Generate a default test suite for a property](#generate-a-default-test-suite-for-a-property). Generates a default test suite for a property version for you to [import](#import-a-test-suite).
+  - [Import a test suite](#import-a-test-suite). Imports to Test Center a test suite with test cases, variables, and property version association.
+  - [Get a test suite's details](#get-a-test-suites-details). Fetches, or exports, test suite's details that you can save and import on a different account or [edit](#edit-a-test-suite-using-json). You can also use this operation to clone test suites within your account.
+  - [Edit a test suite using JSON](#edit-a-test-suite-using-json).
+  - [Run a test using JSON](#run-a-test-using-json).
 
 ## Manage Test Center objects using granular commands
 Here are the commands you can use to manage Test Center objects from the CLI:
 
-- [List test suites](#list-test-suites).
-- [Create a test suite](#create-a-test-suite).
-- [Add a test case to a test suite](#add-a-test-case-to-a-test-suite).
-- [Edit a test suite](#edit-a-test-suite).
-- [Remove a test suite](#remove-a-test-suite).
-- [Remove a test case from a test suite](#remove-a-test-case-from-a-test-suite).
-- [Restore a test suite](#restore-a-test-suite).
-- [Get a test suite's details](#get-a-test-suites-details).
-- [List supported conditions](#list-supported-conditions).
-- [Run a test](#run-a-test).
+  - [List test suites](#list-test-suites).
+  - [Create a test suite](#create-a-test-suite).
+  - [Add a test case to a test suite](#add-a-test-case-to-a-test-suite).
+  - [Edit a test suite](#edit-a-test-suite).
+  - [Remove a test suite](#remove-a-test-suite).
+  - [Remove a test case from a test suite](#remove-a-test-case-from-a-test-suite).
+  - [Restore a test suite](#restore-a-test-suite).
+  - [Get a test suite's details](#get-a-test-suites-details).
+  - [List supported conditions](#list-supported-conditions).
+  - [Run a test](#run-a-test).
 
 # Available operations and commands
 
@@ -127,7 +128,7 @@ You can combine multiple flags to narrow the list.
 - `akamai test-center test-suite list --property 'example.com' --propver '4'`
 - `akamai test-center test-suite list -u 'johndoe' -s 'regression'`
 
-**Expected output**: The response lists all test suites matching the requested filters. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/get-test-suites) description.
+**Expected output**: The response lists all test suites matching the requested filters. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/get-test-suites) description.
 
 ## Create a test suite
 The `test-suite add` command creates a new test suite.
@@ -144,10 +145,10 @@ The `test-suite add` command creates a new test suite.
 - `akamai test-center test-suite add --name 'new test suite'`
 - `akamai test-center test-suite add --name 'new test suite' --description 'TS for example.com' --unlocked --stateful --property 'example.com' --propver '4'`
 
-**Expected output**: The response includes details about the created test suite. It also includes the ID of the test suite that you can use in other operations — for example, to [add a test case to a test suite](#add-a-test-case-to-a-test-suite). For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites) description.
+**Expected output**: The response includes details about the created test suite. It also includes the ID of the test suite that you can use in other operations — for example, to [add a test case to a test suite](#add-a-test-case-to-a-test-suite). For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites) description.
 
 ## Import a test suite
-The `test-suite import` command imports a test suite from a JSON file or standard JSON input. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
+The `test-suite import` command imports a test suite from a JSON file or standard JSON input. You can use the [API documentation](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
 
 **Command**:
 - To import a specific file from your computer: `test-center test-suite import < {FILE_PATH}/FILE_NAME.json`, where `FILE_PATH` and `FILE_NAME` are respectively location and name of the file to import.
@@ -157,7 +158,7 @@ The `test-suite import` command imports a test suite from a JSON file or standar
 - `akamai test-center test-suite import < ./users/johndoe/documents/test_suite_prop19.json`
 - `echo '{"testSuite":{"testSuiteName":"test_suite_prop19","testSuiteDescription":"test suite for property version 19","locked":true,"stateful":false,"variables":[{"variableName":"host","variableValue":"www.akamai.com"}],"testCases":[]}}' | akamai test-center test-suite import`
 
-**Expected output**: The response includes details about the imported test suite. It also includes the ID of the test suite that you can use in other operations— for example, to [edit the test suite using JSON](#edit-a-test-suite-using-json). For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites-with-child-objects) description.
+**Expected output**: The response includes details about the imported test suite. It also includes the ID of the test suite that you can use in other operations— for example, to [edit the test suite using JSON](#edit-a-test-suite-using-json). For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-suites-with-child-objects) description.
 
 ## Add a test case to a test suite
 The `test-suite add-test-case` command adds a functional test case to a specific test suite.
@@ -175,7 +176,7 @@ The `test-suite add-test-case` command adds a functional test case to a specific
 - `akamai test-center test-suite add-test-case --test-suite-id 1001 --url 'https://example.com/' --condition 'Response code is one of "200,201"'`
 - `akamai test-center test-suite add-test-case --test-suite-name 'Example TS' --u 'https://example.com/' -c 'Response code is one of "200"' -a 'Accept: text/html' -a 'X-Custom: 123' -m 'User-Agent: Mozilla' -f 'Accept-Language'`
 
-**Expected output**: The response includes details of the test case created for the test suite. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-cases) description.
+**Expected output**: The response includes details of the test case created for the test suite. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-cases) description.
 
 ## Generate a default test suite for a property
 The `test-suite generate-default` command generates a default test suite with test cases for a specific property. Based on property settings and its behaviors and the `--url` flag value, Test Center generates a test suite object with test cases and variables for you to modify and add to Test Center using the [Import a test suite](#import-a-test-suite) operation.
@@ -189,7 +190,7 @@ The `test-suite generate-default` command generates a default test suite with te
 **Examples**:
 - `akamai test-center test-suite generate-default --property 'example.com' --propver '4' --url "https://www.example.com/" -u "https://www.example.com/index/"`
 
-**Expected output**: The response includes details about the generated response and included test cases. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/auto-generate-test-suite) description.
+**Expected output**: The response includes details about the generated response and included test cases. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/auto-generate-test-suite) description.
 
 ## Edit a test suite
 The `test-suite edit` command edits basic data of a specific test suite. Provide only data you want to edit in the original test suite.
@@ -208,10 +209,10 @@ The `test-suite edit` command edits basic data of a specific test suite. Provide
 - `akamai test-center test-suite edit --id 1001 --name 'Updated test suite' --description 'Test suite for example.com' --property 'example.com' --propver '4' --unlocked`
 - `akamai test-center test-suite edit --id 1001 --stateful --remove-property`
 
-**Expected output**: The response returns the updated test suite. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suite) description.
+**Expected output**: The response returns the updated test suite. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suite) description.
 
 ## Edit a test suite using JSON
-The `test-suite manage` command uses the JSON input to edit a specific test suite. Provide the whole test suite object, together with test cases and variables, to include in Test Center. Only data provided in the latest JSON input will be saved. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
+The `test-suite manage` command uses the JSON input to edit a specific test suite. Provide the whole test suite object, together with test cases and variables, to include in Test Center. Only data provided in the latest JSON input will be saved. You can use the [API documentation](https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
 
 **Command**:
 - To edit the test suite with a specific file from your computer: `test-center test-suite manage < {FILE_PATH}/FILE_NAME.json`, where `FILE_PATH` and `FILE_NAME` are respectively location and name of the file to import.
@@ -223,7 +224,7 @@ The `test-suite manage` command uses the JSON input to edit a specific test suit
 - `akamai test-center test-suite manage < ./users/johndoe/documents/test_suite_prop19.json`
 - `echo '{"testSuite":{"testSuiteName":"test_suite_prop19","testSuiteDescription":"test suite for property version 19","locked":true,"stateful":false,"variables":[{"variableName":"host","variableValue":"www.akamai.com"}],"testCases":[]}}' | akamai test-center test-suite manage`
 
-**Expected output**: The response returns the updated test suite. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) description.
+**Expected output**: The response returns the updated test suite. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/put-test-suites-with-child-objects) description.
 
 ## Remove a test suite
 The `test-suite remove` command removes a specific test suite from Test Center. Test suites can be [restored](#restore-a-test-suite) for 30 days since their removal.
@@ -271,14 +272,14 @@ The `test-suites view` command exports details of a specific test suite, includi
 - `akamai test-center test-suite view --id 1001`
 - `akamai test-center test-suite view --name 'test_suite_prop19' --group-by test-request`
 
-**Expected output**: The response includes details about the test suite. You can save the returned object and import it on a different account or [edit](#edit-a-test-suite-using-json) it. You can also use this operation to clone test suites within your account. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/get-test-suites-with-child-objects) description.
+**Expected output**: The response includes details about the test suite. You can save the returned object and import it on a different account or [edit](#edit-a-test-suite-using-json) it. You can also use this operation to clone test suites within your account. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/get-test-suites-with-child-objects) description.
 
 ## List supported conditions
 The `conditions` command returns the list of all conditions you can use when creating a test case for a test suite. Note that the statements contain default values in `" "`.  You need to replace them with your own values before creating the test case.
 
 **Command**: `conditions`
 
-**Expected output**: List of supported condition statements. For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/get-test-catalog-template) description.
+**Expected output**: List of supported condition statements. For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/get-test-catalog-template) description.
 
 ## Run a test
 The `test` command runs a test for a specific test suite, single test case, or a property version.
@@ -297,10 +298,10 @@ The `test` command runs a test for a specific test suite, single test case, or a
   - the `--filter-header` flag filters the header from the request. Provide only the `name` of the header. This flag is optional.
   - the `-e` flag specifies the environment you want to run the test on, either `staging` or `production`.
 
-**Expected output**: Once you submit the test run, it may take few minutes for Test Center to execute the test. To learn more about returned test results, check [How to read test run results - Functional testing](https://techdocs.akamai.com/test-ctr/docs/view-results#functional-testing). For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) description.
+**Expected output**: Once you submit the test run, it may take few minutes for Test Center to execute the test. To learn more about returned test results, check [How to read test run results - Functional testing](https://techdocs.akamai.com/test-ctr/docs/view-results#functional-testing). For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) description.
 
 ## Run a test using JSON
-The `test` command runs a test for a specific test suite, single test case, or a property version using a JSON file or JSON input. You can use the [API documentation](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
+The `test` command runs a test for a specific test suite, single test case, or a property version using a JSON file or JSON input. You can use the [API documentation](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) to create the JSON file. Add your values to `BODY PARAMS` fields, copy the body of your request from the CURL code sample, and save it as a JSON file.
 
 **Command**:
 To import a specific file from your computer: `test-center test < {FILE_PATH}/FILE_NAME.json`, where `FILE_PATH` and `FILE_NAME` are respectively location and name of the file to import.
@@ -390,7 +391,7 @@ JSON example to run a test for a single test case:
 }
 ```
 
-**Expected output**: Once you submit the test run, it may take a few minutes for Test Center to execute the test. To learn more about returned test results, check [How to read test run results - Functional testing](https://techdocs.akamai.com/test-ctr/docs/view-results#functional-testing). For more details, you can check the [API response](ref:https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) description.
+**Expected output**: Once you submit the test run, it may take a few minutes for Test Center to execute the test. To learn more about returned test results, check [How to read test run results - Functional testing](https://techdocs.akamai.com/test-ctr/docs/view-results#functional-testing). For more details, you can check the [API response](https://techdocs.akamai.com/test-ctr/v3/reference/post-test-runs) description.
 
 # Available flags
 
@@ -432,6 +433,15 @@ The `--version` flag returns the version.
 ## json
 The `--json` flag returns the information in JSON format.
 
+# Exit codes
+When you complete an operation, the CLI generates one of these exit codes:
+
+- `0` (Success) - Indicates that the latest command or script executed successfully.
+- `1` (Configuration error) - Indicates an error while loading the CLI.
+- `2` - Indicates an error related to command arguments, missing flags, or mismatch exception.
+- `3` - Indicates a parsing error in API request and response.
+- `100-199` - Indicates a 4xx HTTP error. To get the HTTP code value add 300 to the returned exit code. 
+- `200-255` - Indicates a 5xx HTTP error. To get the HTTP code value add 300 to the returned exit code.
 
 # Windows 10 2018 version
 If you're using Windows 10, 2018 version and you're having problems running the Test Center
