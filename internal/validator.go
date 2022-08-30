@@ -98,7 +98,7 @@ func (validator Validator) GroupByFlagCheck(groupBy string) {
 	}
 }
 
-func (validator Validator) ValidateImportFields(testSuitesImport *TestSuiteDetailsWithChildObjects) {
+func (validator Validator) ValidateImportFields(testSuitesImport *TestSuiteV3) {
 
 	if len(validator.jsonData) == 0 {
 		AbortWithUsageAndMessageAndCode(validator.cmd, GetErrorMessageForFlag(validator.cmd, Missing, Json), ExitStatusCode2)
@@ -110,7 +110,7 @@ func (validator Validator) ValidateImportFields(testSuitesImport *TestSuiteDetai
 	}
 }
 
-func (validator Validator) ValidateManageFields(testSuitesManage *TestSuiteDetailsWithChildObjects) {
+func (validator Validator) ValidateManageFields(testSuitesManage *TestSuiteV3) {
 
 	if len(validator.jsonData) == 0 {
 		AbortWithUsageAndMessageAndCode(validator.cmd, GetErrorMessageForFlag(validator.cmd, Missing, Json), ExitStatusCode2)
@@ -118,7 +118,7 @@ func (validator Validator) ValidateManageFields(testSuitesManage *TestSuiteDetai
 
 	if validator.jsonData != nil {
 		ByteArrayToStruct(validator.cmd, validator.jsonData, &testSuitesManage)
-		testSuiteId := strconv.Itoa(testSuitesManage.TestSuite.TestSuiteId)
+		testSuiteId := strconv.Itoa(testSuitesManage.TestSuiteId)
 		if testSuiteId == "0" {
 			AbortWithUsageAndMessageAndCode(validator.cmd, GetErrorMessageForFlag(validator.cmd, Missing, "testSuiteId"), ExitStatusCode2)
 		}
@@ -209,7 +209,7 @@ func (validator Validator) ValidateTestRunFlagsAndGetRunEnum(testSuiteId, testSu
 	}
 
 	// Check if target environment flag value is from given enums only.
-	environmentFlagCheck(validator.cmd, strings.ToLower(targetEnvironment))
+	environmentFlagCheck(validator.cmd, strings.ToUpper(targetEnvironment))
 
 	if testSuiteName != "" {
 		runTestUsing = append(runTestUsing, RunTestUsingTestSuiteName)
@@ -244,7 +244,7 @@ func (validator Validator) ValidateTestRunFlagsAndGetRunEnum(testSuiteId, testSu
 		}
 
 		//Check if ip version is set properly
-		ipVersionFlagCheck(validator.cmd, ipVersion)
+		ipVersionFlagCheck(validator.cmd, strings.ToUpper(ipVersion))
 
 		//Check if headers are sent properly
 		headerFlagCheck(validator.cmd, addHeader, modifyHeader)
@@ -287,7 +287,7 @@ func (validator Validator) UrlsFlagCheck(urls []string) {
 
 }
 
-//Check if length of run test using list has more than one different king of flag.
+// Check if length of run test using list has more than one different king of flag.
 func checkExclusiveTestRunFlags(cmd *cobra.Command, runTestUsing []string) {
 	if len(runTestUsing) != 0 {
 		AbortWithUsageAndMessageAndCode(cmd, GetErrorMessageForFlag(cmd, Invalid, "exclusive"), ExitStatusCode2)
@@ -361,5 +361,14 @@ func (validator Validator) NotValidSubcommandCheck(cmd *cobra.Command, args []st
 func (validator Validator) ValidSubcommandLegacyArgsCheck(cmd *cobra.Command, args []string) {
 	if err := LegacyArgs(cmd, args); err != nil {
 		AbortWithUsageAndMessageAndCode(validator.cmd, err.Error(), ExitStatusCode2)
+	}
+}
+
+func (validator Validator) LockedAndStatefulFlagCheck(locked bool, unlocked bool, stateful bool, stateless bool) {
+	if locked && unlocked {
+		AbortWithUsageAndMessageAndCode(validator.cmd, GetErrorMessageForFlag(validator.cmd, Invalid, "lockedUnlocked"), ExitStatusCode2)
+	}
+	if stateful && stateless {
+		AbortWithUsageAndMessageAndCode(validator.cmd, GetErrorMessageForFlag(validator.cmd, Invalid, "statefulStateless"), ExitStatusCode2)
 	}
 }

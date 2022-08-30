@@ -25,8 +25,9 @@ var testSuitesEditCmd = &cobra.Command{
 
 		//Remove config flag check
 		validator.RemoveConfigFlagCheck(propName, removeProperty)
+		validator.LockedAndStatefulFlagCheck(locked, unlocked, stateful, stateless)
 
-		testSuite := svc.EditTestSuite(id, name, description, propName, propVersion, unlocked, stateful, removeProperty)
+		testSuite := svc.EditTestSuite(id, name, description, propName, propVersion, unlocked, stateful, removeProperty, locked, stateless)
 		internal.PrintSuccess(internal.GetServiceMessage(cmd, internal.MessageTypeDisplay, "", "editTSSuccess") + "\n")
 		internal.PrintTestSuite(*testSuite)
 	},
@@ -45,6 +46,8 @@ func init() {
 	testSuitesEditCmd.Flags().StringVar(&description, FlagDescription, "", internal.GetMessageForKey(testSuitesEditCmd, FlagDescription))
 	testSuitesEditCmd.Flags().BoolVar(&unlocked, FlagUnlocked, false, internal.GetMessageForKey(testSuitesEditCmd, FlagUnlocked))
 	testSuitesEditCmd.Flags().BoolVar(&stateful, FlagStateFul, false, internal.GetMessageForKey(testSuitesEditCmd, FlagStateFul))
+	testSuitesEditCmd.Flags().BoolVar(&locked, FlagLocked, false, internal.GetMessageForKey(testSuitesEditCmd, FlagLocked))
+	testSuitesEditCmd.Flags().BoolVar(&stateless, FlagStateless, false, internal.GetMessageForKey(testSuitesEditCmd, FlagStateless))
 	testSuitesEditCmd.Flags().StringVar(&propertyName, FlagProperty, "", internal.GetMessageForKey(testSuitesEditCmd, FlagProperty))
 	testSuitesEditCmd.Flags().StringVar(&propertyVersion, FlagPropver, "", internal.GetMessageForKey(testSuitesEditCmd, FlagPropver))
 	testSuitesEditCmd.Flags().BoolVar(&removeProperty, FlagRemoveProperty, false, internal.GetMessageForKey(testSuitesEditCmd, FlagRemoveProperty))

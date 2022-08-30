@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var testSuiteManage internal.TestSuiteDetailsWithChildObjects
+var testSuiteManage internal.TestSuiteV3
 
 var testSuitesManageCmd = &cobra.Command{
 	Use:     TestSuiteManageUse,

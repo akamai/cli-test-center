@@ -40,9 +40,10 @@ func (svc Service) GetTestSuites(propertyName, propVersion, user, searchString s
 	return filteredTestSuites
 }
 
-func (svc Service) ImportTestSuites(testSuiteImport TestSuiteDetailsWithChildObjects) {
+func (svc Service) ImportTestSuites(testSuiteImport TestSuiteV3) {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "importTestSuite"), !svc.jsonOutput).Start()
+	svc.setClientTypeAndRequestMethod(&testSuiteImport)
 	testSuiteImportResponseV3, err := svc.api.ImportTestSuite(testSuiteImport)
 
 	if err != nil {
@@ -55,8 +56,8 @@ func (svc Service) ImportTestSuites(testSuiteImport TestSuiteDetailsWithChildObj
 		PrintJsonAndExit(testSuiteImportResponseV3)
 	}
 
-	PrintViewTestSuite(svc.cmd, []TestSuiteV3{testSuiteImportResponseV3.Success.TestSuite}, testSuiteImportResponseV3.Success.TestSuite.TestSuiteName)
-	printLabelAndValue(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "testCasesAdded"), testSuiteImportResponseV3.Success.TestSuite.TestCaseCount)
+	PrintViewTestSuite(svc.cmd, []TestSuiteV3{testSuiteImportResponseV3.Success}, testSuiteImportResponseV3.Success.TestSuiteName)
+	printLabelAndValue(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "testCasesAdded"), testSuiteImportResponseV3.Success.TestCaseCount)
 
 	if testSuiteImportResponseV3.Failure.TestCases != nil {
 		PrintError("\n" + GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "importTSTestCaseFailed") + "\n")
@@ -68,10 +69,11 @@ func (svc Service) ImportTestSuites(testSuiteImport TestSuiteDetailsWithChildObj
 	}
 }
 
-func (svc Service) ManageTestSuites(testSuiteManage TestSuiteDetailsWithChildObjects) {
+func (svc Service) ManageTestSuites(testSuiteManage TestSuiteV3) {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "manageTestSuite"), !svc.jsonOutput).Start()
-	testSuiteManageResponseV3, err := svc.api.ManageTestSuite(testSuiteManage, testSuiteManage.TestSuite.TestSuiteId)
+	svc.setClientTypeAndRequestMethod(&testSuiteManage)
+	testSuiteManageResponseV3, err := svc.api.ManageTestSuite(testSuiteManage, testSuiteManage.TestSuiteId)
 
 	if err != nil {
 		spinner.StopWithFailure()
@@ -82,7 +84,7 @@ func (svc Service) ManageTestSuites(testSuiteManage TestSuiteDetailsWithChildObj
 	if svc.jsonOutput {
 		PrintJsonAndExit(testSuiteManageResponseV3)
 	}
-	PrintSuccess(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "manageTSSuccess")+"\n", testSuiteManageResponseV3.TestSuite.TestSuiteName)
+	PrintSuccess(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "manageTSSuccess")+"\n", testSuiteManageResponseV3.TestSuiteName)
 }
 
 func (svc Service) AddTestSuite(name, description, propertyName string, propVersion int, unlocked, stateful bool) *TestSuiteV3 {
@@ -92,8 +94,8 @@ func (svc Service) AddTestSuite(name, description, propertyName string, propVers
 	testSuite := TestSuiteV3{
 		TestSuiteName:        name,
 		TestSuiteDescription: description,
-		Locked:               !unlocked,
-		Stateful:             stateful,
+		IsLocked:             !unlocked,
+		IsStateful:           stateful,
 		Configs: AkamaiConfigs{
 			PropertyManager: PropertyManager{
 				PropertyName:    propertyName,
@@ -115,7 +117,7 @@ func (svc Service) AddTestSuite(name, description, propertyName string, propVers
 	return testSuitesV3
 }
 
-func (svc Service) EditTestSuite(id, name, description, propertyName string, propVersion int, unlocked, stateful, removeProperty bool) *TestSuiteV3 {
+func (svc Service) EditTestSuite(id, name, description, propertyName string, propVersion int, unlocked, stateful, removeProperty bool, locked bool, stateless bool) *TestSuiteV3 {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "editTestSuite"), !svc.jsonOutput).Start()
 	getTestSuite, err := svc.api.GetTestSuiteV3(id)
@@ -124,7 +126,7 @@ func (svc Service) EditTestSuite(id, name, description, propertyName string, pro
 		AbortForCommandWithSubResource(svc.cmd, err, Empty, Read)
 	}
 
-	var updatedTestSuite, isChanged = updateModifiedTestSuiteFields(*getTestSuite, name, description, propertyName, propVersion, unlocked, stateful, removeProperty)
+	var updatedTestSuite, isChanged = updateModifiedTestSuiteFields(*getTestSuite, name, description, propertyName, propVersion, unlocked, stateful, removeProperty, locked, stateless)
 
 	// Check if at least value changed to edit test suite.
 	if !isChanged {
@@ -218,10 +220,10 @@ func (svc Service) GetV3AssociatedTestCasesForTestSuite(testSuiteId int) ([]Test
 	}
 
 	spinner.StopWithSuccess()
-	return associatedTestCases.TestCases, associatedTestCases.AllTestCasesIncluded
+	return associatedTestCases.TestCases, associatedTestCases.AreAllTestCasesIncluded
 }
 
-func (svc Service) GetTestSuiteWithChildObjects(testSuiteId int) TestSuiteDetailsWithChildObjects {
+func (svc Service) GetTestSuiteWithChildObjects(testSuiteId int) TestSuiteV3 {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "testSuiteWithChildObject"), !svc.jsonOutput).Start()
 	testSuiteDetailsWithChildObjects, err := svc.api.GetTestSuitesWithChildObjects(testSuiteId)
@@ -274,9 +276,9 @@ func (svc Service) RemoveTestCasesFromTestSuite(testSuiteId int, testCaseIds []i
 	return removeTestCaseResponse, nil
 }
 
-func (svc Service) GetTestSuiteOrTestSuiteDetailsWithChildObjects(id, name string) ([]TestSuiteV3, TestSuiteDetailsWithChildObjects) {
+func (svc Service) GetTestSuiteOrTestSuiteDetailsWithChildObjects(id, name string) ([]TestSuiteV3, TestSuiteV3) {
 
-	var testSuiteDetailsWithChildObjects = TestSuiteDetailsWithChildObjects{}
+	var testSuiteDetailsWithChildObjects = TestSuiteV3{}
 	if name != "" {
 		testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false)
 		if len(testSuites) > 1 {
@@ -293,8 +295,8 @@ func (svc Service) GetTestSuiteOrTestSuiteDetailsWithChildObjects(id, name strin
 func (svc Service) ViewTestSuite(id string, name string, groupBy string) {
 
 	var testSuites = []TestSuiteV3{}
-	var testSuiteDetailsWithChildObjects = TestSuiteDetailsWithChildObjects{}
-	allTestCasesIncluded := false
+	var testSuiteDetailsWithChildObjects = TestSuiteV3{}
+	areAllTestCasesIncluded := false
 	testSuites, testSuiteDetailsWithChildObjects = svc.GetTestSuiteOrTestSuiteDetailsWithChildObjects(id, name)
 
 	if len(testSuites) > 1 {
@@ -306,11 +308,11 @@ func (svc Service) ViewTestSuite(id string, name string, groupBy string) {
 		if svc.jsonOutput {
 			PrintJsonAndExit(testSuiteDetailsWithChildObjects)
 		} else {
-			PrintViewTestSuite(svc.cmd, []TestSuiteV3{testSuiteDetailsWithChildObjects.TestSuite}, name)
-			if testSuiteDetailsWithChildObjects.TestSuite.TestCaseCount == len(testSuiteDetailsWithChildObjects.TestSuite.TestCases) {
-				allTestCasesIncluded = true
+			PrintViewTestSuite(svc.cmd, []TestSuiteV3{TestSuiteV3(testSuiteDetailsWithChildObjects)}, name)
+			if testSuiteDetailsWithChildObjects.TestCaseCount == len(testSuiteDetailsWithChildObjects.TestCases) {
+				areAllTestCasesIncluded = true
 			}
-			PrintTestCases(svc.cmd, testSuiteDetailsWithChildObjects.TestSuite.TestCases, allTestCasesIncluded, groupBy)
+			PrintTestCases(svc.cmd, testSuiteDetailsWithChildObjects.TestCases, areAllTestCasesIncluded, groupBy)
 		}
 	}
 }
@@ -405,6 +407,7 @@ func (svc Service) RunTest(runTestUsing, testSuiteId, testSuiteName, propertyNam
 	url, condition, ipVersion, targetEnvironment string, addHeader, modifyHeader, filterHeader []string,
 	testRunRequestFromJson TestRun) {
 
+	targetEnvironment = strings.ToUpper(targetEnvironment)
 	var testRun *TestRun
 
 	switch runTestUsing {
@@ -586,9 +589,9 @@ func (svc Service) runConfigVersion(configVersionId int, testSuiteExecutions []T
 func (svc Service) runTestCase(url, condition, ipVersion string, addHeader, modifyHeader,
 	filterHeader []string, targetEnvironment string, runTestUsing string) *TestRun {
 
-	var clientProfile = ClientProfile{IpVersion: Ipv4}
-	if strings.ToLower(ipVersion) == "v6" {
-		clientProfile = ClientProfile{IpVersion: Ipv6}
+	var clientProfile = ClientProfile{IpVersion: Ipv4, ClientType: Browser}
+	if strings.ToUpper(ipVersion) == "V6" {
+		clientProfile = ClientProfile{IpVersion: Ipv6, ClientType: Browser}
 	}
 
 	testRun := TestRun{
@@ -598,6 +601,7 @@ func (svc Service) runTestCase(url, condition, ipVersion string, addHeader, modi
 			TestCaseExecutionV3: TestCaseExecutionV3{
 				TestRequest: TestRequest{
 					TestRequestUrl: url,
+					RequestMethod:  Get,
 					RequestHeaders: getRequestHeaders(addHeader, modifyHeader, filterHeader),
 				},
 				Condition: Condition{
@@ -702,6 +706,7 @@ func constructTestCase(url string, addHeader, modifyHeader, filterHeader []strin
 
 	testRequest = TestRequest{
 		TestRequestUrl: url,
+		RequestMethod:  Get,
 		RequestHeaders: getRequestHeaders(addHeader, modifyHeader, filterHeader),
 	}
 
@@ -710,10 +715,10 @@ func constructTestCase(url string, addHeader, modifyHeader, filterHeader []strin
 	}
 
 	clientProfileId = 2 // Use default IPv4
-	clientProfile = ClientProfile{IpVersion: Ipv4}
-	if ipVersion == "v6" || ipVersion == "V6" {
+	clientProfile = ClientProfile{IpVersion: Ipv4, ClientType: Browser}
+	if strings.ToUpper(ipVersion) == "V6" {
 		clientProfileId = 1
-		clientProfile = ClientProfile{IpVersion: Ipv6}
+		clientProfile = ClientProfile{IpVersion: Ipv6, ClientType: Browser}
 	}
 
 	testCase = TestCase{
@@ -737,7 +742,7 @@ func filterTestCaseUsingOrderNumber(testCases []TestCase, orderNumber int) *Test
 	return nil
 }
 
-func updateModifiedTestSuiteFields(testSuiteV3 TestSuiteV3, name, description, propertyName string, propVersion int, unlocked, stateful, removeProperty bool) (*TestSuiteV3, bool) {
+func updateModifiedTestSuiteFields(testSuiteV3 TestSuiteV3, name, description, propertyName string, propVersion int, unlocked, stateful, removeProperty bool, locked bool, stateless bool) (*TestSuiteV3, bool) {
 
 	var isChanged = false
 	if name != "" && testSuiteV3.TestSuiteName != name {
@@ -750,13 +755,21 @@ func updateModifiedTestSuiteFields(testSuiteV3 TestSuiteV3, name, description, p
 		isChanged = true
 	}
 
-	if testSuiteV3.Locked != !unlocked {
-		testSuiteV3.Locked = !unlocked
+	if locked || unlocked {
+		if locked {
+			testSuiteV3.IsLocked = locked
+		} else {
+			testSuiteV3.IsLocked = !unlocked
+		}
 		isChanged = true
 	}
 
-	if testSuiteV3.Stateful != stateful {
-		testSuiteV3.Stateful = stateful
+	if stateful || stateless {
+		if stateful {
+			testSuiteV3.IsStateful = stateful
+		} else {
+			testSuiteV3.IsStateful = !stateless
+		}
 		isChanged = true
 	}
 
@@ -879,4 +892,17 @@ func (svc Service) GenerateTestSuite(propertyName string, propVersion int, urls 
 		PrintSuccess(fmt.Sprintf(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "generateDefaultTSSuccess")+"\n\n", propertyName, propVersion))
 	}
 	PrintJsonAndExit(generatedTs)
+}
+
+// setClientTypeAndRequestMethod set ClientType and RequestMethod to defaults
+func (svc Service) setClientTypeAndRequestMethod(testSuiteV3 *TestSuiteV3) {
+	if testSuiteV3 != nil && len(testSuiteV3.TestCases) > 0 {
+		var updatedTestCases []TestCase
+		for _, tc := range testSuiteV3.TestCases {
+			tc.TestRequest.RequestMethod = Get
+			tc.ClientProfile.ClientType = Browser
+			updatedTestCases = append(updatedTestCases, tc)
+		}
+		testSuiteV3.TestCases = updatedTestCases
+	}
 }

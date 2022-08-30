@@ -2,12 +2,14 @@ package internal
 
 // HTTP headers
 const (
-	ContentType = "Content-Type"
+	ContentType      = "Content-Type"
+	IsRequestFromCli = "X-ATC-IS-CLI-REQUEST"
 )
 
 // HTTP header values
 const (
-	ApplicationJson = "application/json"
+	ApplicationJson  = "application/json"
+	RequestIsFromCli = "YES"
 )
 
 // HTTP request methods
@@ -20,28 +22,33 @@ const (
 
 // Request header actions
 const (
-	Add    = "add"
-	Modify = "modify"
-	Filter = "filter"
+	Add    = "ADD"
+	Modify = "MODIFY"
+	Filter = "FILTER"
 )
 
 // Test Center execution / evaluation status
 const (
-	Completed  = "completed"
-	InProgress = "in_progress"
-	Passed     = "passed"
+	Completed  = "COMPLETED"
+	InProgress = "IN_PROGRESS"
+	Passed     = "PASSED"
 )
 
 // IP versions
 const (
-	Ipv4 = "ipv4"
-	Ipv6 = "ipv6"
+	Ipv4 = "IPV4"
+	Ipv6 = "IPV6"
+)
+
+// Browser ClientTypes
+const (
+	Browser = "BROWSER"
 )
 
 // Environments
 const (
-	Staging    = "staging"
-	Production = "production"
+	Staging    = "STAGING"
+	Production = "PRODUCTION"
 )
 
 // constant message keys

@@ -286,8 +286,8 @@ func PrintTestSuite(testSuiteV3 TestSuiteV3) {
 	printLabelAndValue(LabelId, testSuiteV3.TestSuiteId)
 	printLabelAndValue(LabelName, testSuiteV3.TestSuiteName)
 	printLabelAndValue(LabelDescription, testSuiteV3.TestSuiteDescription)
-	printLabelAndValue(LabelStateful, ConvertBooleanToYesOrNo(testSuiteV3.Stateful))
-	printLabelAndValue(LabelLocked, ConvertBooleanToYesOrNo(testSuiteV3.Locked))
+	printLabelAndValue(LabelStateful, ConvertBooleanToYesOrNo(testSuiteV3.IsStateful))
+	printLabelAndValue(LabelLocked, ConvertBooleanToYesOrNo(testSuiteV3.IsLocked))
 	printLabelAndValue(LabelVariables, "")
 	printVariables(testSuiteV3.Variables)
 	if testSuiteV3.Configs.PropertyManager.PropertyVersion != 0 {
@@ -390,7 +390,7 @@ func PrintTestSuitesTable(cmd *cobra.Command, testSuites []TestSuiteV3) {
 	fmt.Println()
 }
 
-func PrintTestCases(cmd *cobra.Command, testCases []TestCase, allTestCasesIncluded bool, groupBy string) {
+func PrintTestCases(cmd *cobra.Command, testCases []TestCase, areAllTestCasesIncluded bool, groupBy string) {
 
 	//Print All associated Test Cases
 	PrintHeader(GetServiceMessage(cmd, MessageTypeDisplay, "", "testCaseHeader") + "\n")
@@ -398,7 +398,7 @@ func PrintTestCases(cmd *cobra.Command, testCases []TestCase, allTestCasesInclud
 	if len(testCases) <= 0 {
 		PrintWarning(GetServiceMessage(cmd, MessageTypeDisplay, "", "noTestCaseWarning"))
 		//Printing warning here only and returning from method so that empty table does not print
-		printMissingTestCasesWarning(cmd, allTestCasesIncluded)
+		printMissingTestCasesWarning(cmd, areAllTestCasesIncluded)
 		fmt.Println()
 		fmt.Println()
 		return
@@ -410,7 +410,7 @@ func PrintTestCases(cmd *cobra.Command, testCases []TestCase, allTestCasesInclud
 		printGroupedTestCases(testCases, groupBy)
 	}
 
-	printMissingTestCasesWarning(cmd, allTestCasesIncluded)
+	printMissingTestCasesWarning(cmd, areAllTestCasesIncluded)
 	fmt.Println()
 	fmt.Println()
 }
@@ -527,8 +527,8 @@ func sortTestCasesByOrder(testCaseMap map[string][]TestCase) []GroupedTestCases 
 	return groupedTestCasesMap
 }
 
-func printMissingTestCasesWarning(cmd *cobra.Command, allTestCasesIncluded bool) {
-	if !allTestCasesIncluded {
+func printMissingTestCasesWarning(cmd *cobra.Command, areAllTestCasesIncluded bool) {
+	if !areAllTestCasesIncluded {
 		fmt.Println()
 		fmt.Println()
 		PrintWarning(GetMessageForKey(cmd, "hostnameAccessMissing"))

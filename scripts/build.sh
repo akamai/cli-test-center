@@ -44,3 +44,6 @@ GOOS=windows GOARCH=386 go build -o build/akamai-$COMMAND_NAME-$1-windows386.exe
 
 GOOS=windows GOARCH=amd64 go build -o build/akamai-$COMMAND_NAME-$1-windowsamd64.exe .
 # shasum -a 256 build/akamai-$COMMAND_NAME-$1-windowsamd64.exe | awk '{print $1}' > build/akamai-$COMMAND_NAME-$1-windowsamd64.exe.sig
+
+GOOS=darwin GOARCH=arm64 go build -o build/akamai-$COMMAND_NAME-$1-macarm64 .
+shasum -a 256 build/akamai-$COMMAND_NAME-$1-macarm64 | awk '{print $1}' > build/akamai-$COMMAND_NAME-$1-macarm64.sig

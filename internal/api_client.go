@@ -257,13 +257,13 @@ func (api ApiClient) EditTestSuitesV3(testSuiteV3 TestSuiteV3, id string) (*Test
 	return nil, CliErrorFromPulsarProblemObject(*byt, nil, resp.StatusCode, ApiErrorEditTestSuiteV3PostCall)
 }
 
-func (api ApiClient) GetTestSuitesWithChildObjects(testSuiteId int) (*TestSuiteDetailsWithChildObjects, *CliError) {
+func (api ApiClient) GetTestSuitesWithChildObjects(testSuiteId int) (*TestSuiteV3, *CliError) {
 
 	v3Path := fmt.Sprintf("/test-management/v3/functional/test-suites/%d/with-child-objects", testSuiteId)
 	resp, byt := api.client.request(Get, v3Path, nil, nil)
 
 	if resp.StatusCode == 200 {
-		var testSuite TestSuiteDetailsWithChildObjects
+		var testSuite TestSuiteV3
 		err := json.Unmarshal(*byt, &testSuite)
 		if err != nil {
 			log.Error(err)
@@ -316,7 +316,7 @@ func (api ApiClient) AddTestCaseToTestSuite(testSuiteId int, testCases []TestCas
 	return nil, CliErrorFromPulsarProblemObject(*byt, nil, resp.StatusCode, ApiErrorAddTestCasesToTestSuitPostCall)
 }
 
-func (api ApiClient) ImportTestSuite(testSuiteImport TestSuiteDetailsWithChildObjects) (*TestSuiteImportResponseV3, *CliError) {
+func (api ApiClient) ImportTestSuite(testSuiteImport TestSuiteV3) (*TestSuiteImportResponseV3, *CliError) {
 
 	testSuiteImportJson, err := json.Marshal(testSuiteImport)
 	if err != nil {
@@ -341,7 +341,7 @@ func (api ApiClient) ImportTestSuite(testSuiteImport TestSuiteDetailsWithChildOb
 	return nil, CliErrorFromPulsarProblemObject(*byt, nil, resp.StatusCode, ApiErrorImportTestSuiteV3PostCall)
 }
 
-func (api ApiClient) ManageTestSuite(testSuiteManage TestSuiteDetailsWithChildObjects, testSuiteId int) (*TestSuiteDetailsWithChildObjects, *CliError) {
+func (api ApiClient) ManageTestSuite(testSuiteManage TestSuiteV3, testSuiteId int) (*TestSuiteV3, *CliError) {
 
 	testSuiteManageJson, err := json.Marshal(testSuiteManage)
 	if err != nil {
@@ -355,7 +355,7 @@ func (api ApiClient) ManageTestSuite(testSuiteManage TestSuiteDetailsWithChildOb
 
 	resp, byt := api.client.request(Put, path, &testSuiteManageJson, requestHeaders)
 	if resp.StatusCode == 200 {
-		var testSuiteManageResponseV3 TestSuiteDetailsWithChildObjects
+		var testSuiteManageResponseV3 TestSuiteV3
 		err := json.Unmarshal(*byt, &testSuiteManageResponseV3)
 		if err != nil {
 			log.Error(err)
@@ -417,7 +417,7 @@ func (api ApiClient) GetConditionTemplate() (*ConditionTemplate, *CliError) {
 	return nil, CliErrorFromPulsarProblemObject(*byt, nil, resp.StatusCode, ApiErrorConditionTemplateGetCall)
 }
 
-func (api ApiClient) GenerateTestSuite(defaultTsRequest DefaultTestSuiteRequest) (*TestSuiteDetailsWithChildObjects, *CliError) {
+func (api ApiClient) GenerateTestSuite(defaultTsRequest DefaultTestSuiteRequest) (*TestSuiteV3, *CliError) {
 
 	defaultTestSuiteReqJson, err := json.Marshal(defaultTsRequest)
 	if err != nil {
@@ -432,7 +432,7 @@ func (api ApiClient) GenerateTestSuite(defaultTsRequest DefaultTestSuiteRequest)
 	resp, byt := api.client.request(Post, path, &defaultTestSuiteReqJson, requestHeaders)
 
 	if resp.StatusCode == 200 {
-		var defaultTsResponse TestSuiteDetailsWithChildObjects
+		var defaultTsResponse TestSuiteV3
 		err := json.Unmarshal(*byt, &defaultTsResponse)
 		if err != nil {
 			log.Error(err)

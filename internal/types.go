@@ -12,6 +12,7 @@ type ClientProfile struct {
 	GeoLocation     string      `json:"geoLocation,omitempty"`
 	IpVersion       string      `json:"ipVersion"`
 	Browser         BrowserInfo `json:"browser,omitempty"`
+	ClientType      string      `json:"clientType,omitempty"`
 }
 
 type RequestHeader struct {
@@ -23,6 +24,7 @@ type RequestHeader struct {
 type TestRequest struct {
 	TestRequestId  int             `json:"testRequestId,omitempty"`
 	TestRequestUrl string          `json:"testRequestUrl"`
+	RequestMethod  string          `json:"requestMethod,omitempty"`
 	RequestHeaders []RequestHeader `json:"requestHeaders,omitempty"`
 	Tags           []string        `json:"tags,omitempty"`
 }
@@ -33,8 +35,8 @@ type Condition struct {
 }
 
 type AssociatedTestCases struct {
-	AllTestCasesIncluded bool       `json:"allTestCasesIncluded"`
-	TestCases            []TestCase `json:"testCases"`
+	AreAllTestCasesIncluded bool       `json:"areAllTestCasesIncluded"`
+	TestCases               []TestCase `json:"testCases"`
 }
 
 type TestCase struct {
@@ -64,18 +66,18 @@ type TestSuite struct {
 	TestSuiteId          int    `json:"testSuiteId,omitempty"`
 	TestSuiteName        string `json:"testSuiteName"`
 	TestSuiteDescription string `json:"testSuiteDescription,omitempty"`
-	Locked               bool   `json:"locked"`
-	Stateful             bool   `json:"stateful"`
+	IsLocked             bool   `json:"isLocked"`
+	IsStateful           bool   `json:"isStateful"`
 }
 
-//We may add list responses for different objects here if needed in future e.g. variables, test-cases
+// We may add list responses for different objects here if needed in future e.g. variables, test-cases
 type ListResponse struct {
 	TestSuites []TestSuiteV3 `json:"testSuites,omitempty"`
 }
 
 type TestSuiteImportResponseV3 struct {
-	Success TestSuiteDetailsWithChildObjects `json:"success,omitempty"`
-	Failure TestSuiteImportFailure           `json:"failure,omitempty"`
+	Success TestSuiteV3            `json:"success,omitempty"`
+	Failure TestSuiteImportFailure `json:"failure,omitempty"`
 }
 
 type TestSuiteImportFailure struct {
@@ -93,8 +95,8 @@ type TestSuiteV3 struct {
 	TestSuiteId          int           `json:"testSuiteId,omitempty"`
 	TestSuiteName        string        `json:"testSuiteName"`
 	TestSuiteDescription string        `json:"testSuiteDescription,omitempty"`
-	Locked               bool          `json:"locked"`
-	Stateful             bool          `json:"stateful"`
+	IsLocked             bool          `json:"isLocked"`
+	IsStateful           bool          `json:"isStateful"`
 	TestCaseCount        int           `json:"testCaseCount"`
 	Configs              AkamaiConfigs `json:"configs,omitempty"`
 	TestCases            []TestCase    `json:"testCases,omitempty"`
@@ -105,10 +107,6 @@ type Variable struct {
 	VariableId    int    `json:"variableId,omitempty"`
 	VariableName  string `json:"variableName"`
 	VariableValue string `json:"variableValue,omitempty"`
-}
-
-type TestSuiteDetailsWithChildObjects struct {
-	TestSuite TestSuiteV3 `json:"testSuite,omitempty"`
 }
 
 type AkamaiConfigs struct {
@@ -254,12 +252,12 @@ type ConditionExpression struct {
 }
 
 type PlaceHolder struct {
-	PlaceHolder         string        `json:"placeHolder,omitempty"`
-	ValueInputType      string        `json:"valueInputType,omitempty"`
-	ValueDataType       string        `json:"valueDataType,omitempty"`
-	SupportsCustomValue bool          `json:"supportsCustomValue,omitempty"`
-	ValueSeparator      string        `json:"valueSeparator,omitempty"`
-	AvailableValues     []interface{} `json:"availableValues"`
+	PlaceHolder            string        `json:"placeHolder,omitempty"`
+	ValueInputType         string        `json:"valueInputType,omitempty"`
+	ValueDataType          string        `json:"valueDataType,omitempty"`
+	IsCustomValueSupported bool          `json:"isCustomValueSupported,omitempty"`
+	ValueSeparator         string        `json:"valueSeparator,omitempty"`
+	AvailableValues        []interface{} `json:"availableValues"`
 }
 
 type ConditionType struct {
