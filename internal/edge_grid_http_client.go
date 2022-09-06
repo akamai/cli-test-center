@@ -54,12 +54,13 @@ func (h EdgeGridHttpClient) request(method string, path string, payload *[]byte,
 			AbortWithExitCode(err.Error(), ExitStatusCode1)
 		}
 	}
-
 	if headers != nil {
 		req.Header = headers
 	}
 
 	req = edgegrid.AddRequestHeader(h.config, req)
+	// adding this custom header for POST/HEAD data filtering done in TMF, to be removed later once we support POST/HEAD
+	req.Header.Add(IsRequestFromCli, RequestIsFromCli)
 
 	resp, er := client.Do(req)
 	if er != nil {

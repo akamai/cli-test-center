@@ -10,7 +10,9 @@ var (
 	name            string
 	description     string
 	unlocked        bool
+	locked          bool
 	stateful        bool
+	stateless       bool
 	propertyName    string
 	propertyVersion string
 	removeProperty  bool

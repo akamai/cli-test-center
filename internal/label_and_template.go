@@ -1,7 +1,7 @@
 package internal
 
 const (
-	LabelId                        = "Id"
+	LabelId                        = "ID"
 	LabelName                      = "Name"
 	LabelDescription               = "Description"
 	LabelStateful                  = "Stateful"
@@ -23,7 +23,7 @@ const (
 	LabelPropertyVersion           = "Property version"
 	LabelIPv4                      = "IPv4"
 	LabelIPv6                      = "IPv6"
-	LabelTSDeleteState             = "Test suite names prefixed with '*' are in deleted state"
+	LabelTSDeleteState             = "Test suites with the '*' prefix in their names are in the deleted state. You can restore them for 30 days since their removal."
 )
 
 const (
