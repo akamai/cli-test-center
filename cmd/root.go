@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"errors"
-	"os"
-
 	"github.com/akamai/AkamaiOPEN-edgegrid-golang/edgegrid"
 	"github.com/akamai/cli-test-center/internal"
 	"github.com/fatih/color"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -71,6 +72,21 @@ func init() {
 	rootCmd.SilenceErrors = true
 	rootCmd.SilenceUsage = true
 
+	// Setting the default values for the global flags from environment variable.
+	defaultEdgercPath := os.Getenv(DefaultEdgercPathKey)
+	defaultEdgercSection := os.Getenv(DefaultEdgercSectionKey)
+	globalJsonFlag, _ := strconv.ParseBool(os.Getenv(DefaultJsonOutputKey))
+
+	if defaultEdgercPath == internal.Empty {
+		if home, err := homedir.Dir(); err == nil {
+			defaultEdgercPath = filepath.Join(home, FlagEdgercDefaultValue)
+		}
+	}
+
+	if defaultEdgercSection == internal.Empty {
+		defaultEdgercSection = FlagSectionDefaultValue
+	}
+
 	rootCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
 		internal.PrintError(err.Error() + "\n\n")
 		cmd.Println(cmd.UsageString())
@@ -80,10 +96,10 @@ func init() {
 	rootCmd.Short = internal.GetMessageForKey(rootCmd, internal.Short)
 	rootCmd.Long = internal.GetMessageForKey(rootCmd, internal.Long)
 
-	rootCmd.PersistentFlags().StringVar(&edgeRcPath, FlagEdgerc, FlagEdgercDefaultValue, internal.GetMessageForKey(rootCmd, FlagEdgerc))
-	rootCmd.PersistentFlags().StringVar(&edgeRcSection, FlagSection, FlagSectionDefaultValue, internal.GetMessageForKey(rootCmd, FlagSection))
-	rootCmd.PersistentFlags().StringVar(&accountSwitchKey, FlagAccountKey, "", internal.GetMessageForKey(rootCmd, FlagAccountKey))
-	rootCmd.PersistentFlags().BoolVar(&jsonOutput, FlagJson, false, internal.GetMessageForKey(rootCmd, FlagJson))
+	rootCmd.PersistentFlags().StringVar(&edgeRcPath, FlagEdgerc, defaultEdgercPath, internal.GetMessageForKey(rootCmd, FlagEdgerc))
+	rootCmd.PersistentFlags().StringVar(&edgeRcSection, FlagSection, defaultEdgercSection, internal.GetMessageForKey(rootCmd, FlagSection))
+	rootCmd.PersistentFlags().StringVar(&accountSwitchKey, FlagAccountKey, internal.Empty, internal.GetMessageForKey(rootCmd, FlagAccountKey))
+	rootCmd.PersistentFlags().BoolVar(&jsonOutput, FlagJson, globalJsonFlag, internal.GetMessageForKey(rootCmd, FlagJson))
 	rootCmd.PersistentFlags().BoolVar(&forceColor, FlagForceColor, false, internal.GetMessageForKey(rootCmd, FlagForceColor))
 	rootCmd.Flags().BoolP(FlagHelp, FlagHelpShortHand, false, internal.GetMessageForKey(rootCmd, FlagHelp))
 	rootCmd.Flags().BoolP(FlagVersion, FlagVersionShortHand, false, internal.GetMessageForKey(rootCmd, FlagVersion))

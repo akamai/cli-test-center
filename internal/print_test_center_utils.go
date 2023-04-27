@@ -19,45 +19,45 @@ type GroupedTestCases struct {
 	Value []TestCase
 }
 
-func GetFunctionalContextMap(testRunContext *TestRunContext) (*FunctionalContextMap, *CliError) {
-	functionalContext := testRunContext.Functional
+func GetFunctionalContextMap(testRun *TestRun) (*FunctionalContextMap, *CliError) {
+	testSuiteExecutions := testRun.Functional.TestSuiteExecutionsV3
 	var functionalContextMap = FunctionalContextMap{}
-	functionalContextMap.ConfigVersionsMap = make(map[int]ConfigVersionContextMap)
+	functionalContextMap.PropertyManagersMap = make(map[int]PropertyManagerContextMap)
 
-	for _, configVersionContext := range functionalContext.ConfigVersions {
-		var configVersionContextMap ConfigVersionContextMap
-		err := copier.Copy(&configVersionContextMap, &configVersionContext)
-		if err != nil {
-			log.Errorln(err)
-			return nil, CliErrorWithMessage(CliErrorMessageTestRunContext)
-		}
-		configVersionContextMap.TestSuitesMap = testSuiteContextListToMap(configVersionContext.TestSuites)
-		functionalContextMap.ConfigVersionsMap[configVersionContext.ConfigVersionId] = configVersionContextMap
+	propertyManagerContext := testRun.Functional.PropertyManagerExecution
+
+	var propertyManagerContextMap PropertyManagerContextMap
+	err := copier.Copy(&propertyManagerContextMap, &propertyManagerContext.PropertyVersion)
+	if err != nil {
+		log.Errorln(err)
+		return nil, CliErrorWithMessage(CliErrorMessageTestRunContext)
 	}
+	propertyManagerContextMap.TestSuitesMap = testSuiteContextListToMap(propertyManagerContext.TestSuiteExecutionsV3)
+	functionalContextMap.PropertyManagersMap[propertyManagerContext.PropertyId] = propertyManagerContextMap
 
-	functionalContextMap.TestSuitesMap = testSuiteContextListToMap(functionalContext.TestSuites)
+	functionalContextMap.TestSuitesMap = testSuiteContextListToMap(testSuiteExecutions)
 
 	return &functionalContextMap, nil
 }
 
-func testSuiteContextListToMap(testSuiteContexts []TestSuiteContext) map[int]TestSuiteContextMap {
+func testSuiteContextListToMap(testSuiteExecutionV3s []TestSuiteExecutionV3) map[int]TestSuiteContextMap {
 	testSuitesContextMap := make(map[int]TestSuiteContextMap)
-	for _, testSuiteContext := range testSuiteContexts {
+	for _, testSuiteContext := range testSuiteExecutionV3s {
 		var testSuiteContextMap TestSuiteContextMap
-		err := copier.Copy(&testSuiteContextMap, &testSuiteContext)
+		err := copier.Copy(&testSuiteContextMap, &testSuiteContext.TestSuiteContext)
 		if err != nil {
 			return nil
 		}
-		testSuiteContextMap.TestCasesMap = testCasesListToMap(testSuiteContext.TestCases)
+		testSuiteContextMap.TestCasesMap = testCasesListToMap(testSuiteContext.TestCaseExecutionsV3)
 		testSuitesContextMap[testSuiteContext.TestSuiteId] = testSuiteContextMap
 	}
 	return testSuitesContextMap
 }
 
-func testCasesListToMap(testCases []TestCase) map[int]TestCase {
+func testCasesListToMap(testCases []TestCaseExecutionV3) map[int]TestCase {
 	testCasesMap := make(map[int]TestCase)
 	for _, testCase := range testCases {
-		testCasesMap[testCase.TestCaseId] = testCase
+		testCasesMap[testCase.TestCaseId] = testCase.TestCaseContext
 	}
 	return testCasesMap
 }
@@ -66,13 +66,11 @@ func GetTestRunStats(testRun TestRun) (ResultStats, map[int]ResultStats) {
 	resultStats := ResultStats{}
 	tsxResultStatsMap := make(map[int]ResultStats)
 
-	for _, cvx := range testRun.Functional.ConfigVersionExecutions {
-		cvxResultStats := getConfigVersionExecutionStats(cvx, tsxResultStatsMap)
-		addResultStats(&resultStats, &cvxResultStats)
+	pmx := testRun.Functional.PropertyManagerExecution
+	pmxResultStats := getPropertyManagerExecutionStats(pmx, tsxResultStatsMap)
+	addResultStats(&resultStats, &pmxResultStats)
 
-	}
-
-	for _, tsx := range testRun.Functional.TestSuiteExecutions {
+	for _, tsx := range testRun.Functional.TestSuiteExecutionsV3 {
 		tsxResultStats := getTestSuiteExecutionStats(tsx)
 		addResultStats(&resultStats, &tsxResultStats)
 		tsxResultStatsMap[tsx.TestSuiteExecutionId] = tsxResultStats
@@ -81,7 +79,17 @@ func GetTestRunStats(testRun TestRun) (ResultStats, map[int]ResultStats) {
 	return resultStats, tsxResultStatsMap
 }
 
-func getTestCaseExecutionsStats(testCaseExecutions []TestCaseExecutionV2) ResultStats {
+func getPropertyManagerExecutionStats(pmExecution PropertyManagerExecution, tsxResultStatsMap map[int]ResultStats) ResultStats {
+	resultStats := ResultStats{}
+	for _, tsx := range pmExecution.TestSuiteExecutionsV3 {
+		tsxResultStats := getTestSuiteExecutionStats(tsx)
+		addResultStats(&resultStats, &tsxResultStats)
+		tsxResultStatsMap[tsx.TestSuiteExecutionId] = tsxResultStats
+	}
+	return resultStats
+}
+
+func getTestCaseExecutionsStats(testCaseExecutions []TestCaseExecutionV3) ResultStats {
 	resultStats := ResultStats{}
 	for _, tcx := range testCaseExecutions {
 		resultStats.TotalTestCasesCount += 1
@@ -98,18 +106,8 @@ func getTestCaseExecutionsStats(testCaseExecutions []TestCaseExecutionV2) Result
 	return resultStats
 }
 
-func getTestSuiteExecutionStats(testSuiteExecution TestSuiteExecution) ResultStats {
-	resultStats := getTestCaseExecutionsStats(testSuiteExecution.TestCaseExecutionV2)
-	return resultStats
-}
-
-func getConfigVersionExecutionStats(configVersionExecution ConfigVersionExecution, tsxResultStatsMap map[int]ResultStats) ResultStats {
-	resultStats := ResultStats{}
-	for _, tsx := range configVersionExecution.TestSuiteExecutions {
-		tsxResultStats := getTestSuiteExecutionStats(tsx)
-		addResultStats(&resultStats, &tsxResultStats)
-		tsxResultStatsMap[tsx.TestSuiteExecutionId] = tsxResultStats
-	}
+func getTestSuiteExecutionStats(testSuiteExecution TestSuiteExecutionV3) ResultStats {
+	resultStats := getTestCaseExecutionsStats(testSuiteExecution.TestCaseExecutionsV3)
 	return resultStats
 }
 
@@ -120,9 +118,9 @@ func addResultStats(destResultStats *ResultStats, resultStats *ResultStats) {
 	destResultStats.SystemErrorTestCasesCount += resultStats.SystemErrorTestCasesCount
 }
 
-func PrintTestResult(cmd *cobra.Command, testRun *TestRun, testRunContext *TestRunContext) {
+func PrintTestResult(cmd *cobra.Command, testRun *TestRun) {
 	testRunStats, tsxResultStatsMap := GetTestRunStats(*testRun)
-	functionalContextMap, err := GetFunctionalContextMap(testRunContext)
+	functionalContextMap, err := GetFunctionalContextMap(testRun)
 	if err != nil {
 		AbortForCommand(cmd, err)
 	}
@@ -140,40 +138,24 @@ func PrintTestResult(cmd *cobra.Command, testRun *TestRun, testRunContext *TestR
 	printLabelAndValue(LabelTargetEnvironment, CamelToTitle(testRun.TargetEnvironment))
 	fmt.Println()
 
-	for i, configVersionExecution := range testRun.Functional.ConfigVersionExecutions {
-		PrintConfigVersionExecution(cmd, configVersionExecution, functionalContextMap.ConfigVersionsMap, tsxResultStatsMap)
-		if i < len(testRun.Functional.ConfigVersionExecutions)-1 {
-			fmt.Println(SeparateLine)
-		}
-	}
+	propertyManagerExecution := testRun.Functional.PropertyManagerExecution
+	PrintPropertyManagerExecution(cmd, propertyManagerExecution, functionalContextMap.PropertyManagersMap, tsxResultStatsMap)
 
-	for i, testSuiteExecution := range testRun.Functional.TestSuiteExecutions {
+	for i, testSuiteExecution := range testRun.Functional.TestSuiteExecutionsV3 {
 		PrintTestSuiteExecution(cmd, testSuiteExecution, functionalContextMap.TestSuitesMap, tsxResultStatsMap)
-		if i < len(testRun.Functional.TestSuiteExecutions)-1 {
+		if i < len(testRun.Functional.TestSuiteExecutionsV3)-1 {
 			fmt.Println(SeparateLine)
 		}
 	}
 
-	if testRun.Functional.TestCaseExecutionV3.TestRequest.TestRequestUrl != Empty {
+	if testRun.Functional.TestCaseExecution.TestRequest.TestRequestUrl != Empty {
 		log.Debug("Printing result for single test case execution!!!")
 		PrintTestCaseExecution(testRun)
 	}
 
 }
 
-func PrintConfigVersionExecution(cmd *cobra.Command, configVersionExecution ConfigVersionExecution, configVersionsContextMap map[int]ConfigVersionContextMap, tsxResultStatsMap map[int]ResultStats) {
-	propertyVersion := configVersionsContextMap[configVersionExecution.ConfigVersionId]
-	fmt.Printf("%s: %s v%d\n\n", bold(LabelPropertyVersion), propertyVersion.PropertyName, propertyVersion.PropertyVersion)
-
-	for i, tsx := range configVersionExecution.TestSuiteExecutions {
-		PrintTestSuiteExecution(cmd, tsx, propertyVersion.TestSuitesMap, tsxResultStatsMap)
-		if i < len(configVersionExecution.TestSuiteExecutions)-1 {
-			fmt.Println(SeparateLine)
-		}
-	}
-}
-
-func PrintTestSuiteExecution(cmd *cobra.Command, testSuiteExecution TestSuiteExecution, testSuitesContextMap map[int]TestSuiteContextMap, tsxResultStatsMap map[int]ResultStats) {
+func PrintTestSuiteExecution(cmd *cobra.Command, testSuiteExecution TestSuiteExecutionV3, testSuitesContextMap map[int]TestSuiteContextMap, tsxResultStatsMap map[int]ResultStats) {
 	testSuite := testSuitesContextMap[testSuiteExecution.TestSuiteId]
 	tsxResultStats := tsxResultStatsMap[testSuiteExecution.TestSuiteExecutionId]
 
@@ -194,14 +176,14 @@ func PrintTestSuiteExecution(cmd *cobra.Command, testSuiteExecution TestSuiteExe
 	testSuiteHeader += strings.Join(testCaseResults, ", ")
 	fmt.Println(testSuiteHeader + "\n")
 
-	for _, tcx := range testSuiteExecution.TestCaseExecutionV2 {
+	for _, tcx := range testSuiteExecution.TestCaseExecutionsV3 {
 		PrintTestCasesExecution(tcx, testSuite.TestCasesMap)
 	}
 
 	fmt.Println()
 }
 
-func PrintTestCasesExecution(testCaseExecution TestCaseExecutionV2, testCasesMap map[int]TestCase) {
+func PrintTestCasesExecution(testCaseExecution TestCaseExecutionV3, testCasesMap map[int]TestCase) {
 	testCase := testCasesMap[testCaseExecution.TestCaseId]
 
 	if testCase.ClientProfile.IpVersion == Ipv4 {
@@ -241,9 +223,20 @@ func PrintTestCasesExecution(testCaseExecution TestCaseExecutionV2, testCasesMap
 	fmt.Println()
 }
 
+func PrintPropertyManagerExecution(cmd *cobra.Command, propertyManagerExecution PropertyManagerExecution, propertyManagersContextMap map[int]PropertyManagerContextMap, tsxResultStatsMap map[int]ResultStats) {
+	propertyVersion := propertyManagersContextMap[propertyManagerExecution.PropertyId]
+
+	for i, tsx := range propertyManagerExecution.TestSuiteExecutionsV3 {
+		PrintTestSuiteExecution(cmd, tsx, propertyVersion.TestSuitesMap, tsxResultStatsMap)
+		if i < len(propertyManagerExecution.TestSuiteExecutionsV3)-1 {
+			fmt.Println(SeparateLine)
+		}
+	}
+}
+
 func PrintTestCaseExecution(testRun *TestRun) {
 
-	testCaseExecution := &testRun.Functional.TestCaseExecutionV3
+	testCaseExecution := &testRun.Functional.TestCaseExecution
 	if testCaseExecution.ClientProfile.IpVersion == Ipv4 {
 		fmt.Println(testCaseExecution.TestRequest.TestRequestUrl + SeparatePipe + bold(LabelIPv4))
 	} else {
@@ -375,7 +368,7 @@ func PrintTestSuitesTable(cmd *cobra.Command, testSuites []TestSuiteV3) {
 			propertyVersionStr = fmt.Sprintf("%s v%d", ts.Configs.PropertyManager.PropertyName, ts.Configs.PropertyManager.PropertyVersion)
 		}
 		tsId := strconv.Itoa(ts.TestSuiteId)
-		tcCount := strconv.Itoa(ts.TestCaseCount)
+		tcCount := strconv.Itoa(ts.ExecutableTestCaseCount)
 
 		row := []string{tsId, ts.TestSuiteName, ts.TestSuiteDescription, propertyVersionStr, tcCount}
 		contents[i] = row
