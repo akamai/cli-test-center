@@ -10,6 +10,7 @@ require (
 	github.com/fatih/color v1.12.0
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/copier v0.3.2
+	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/oleiade/reflections v1.0.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/sirupsen/logrus v1.8.1

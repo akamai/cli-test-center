@@ -43,6 +43,9 @@
 
 Test Center is a testing tool that checks the effect of configuration changes on your web property. Use this CLI as part of your testing protocol to increase your confidence in the safety and accuracy of your configuration changes.
 
+> **_Breaking changes_**: Due to the active development of the new Test Center experience, we implemented the following changes to the CLI: <br> 1. In the `clientProfile` object, the `clientType` field is changed to `client` with values `CHROME` and `CURL`.  <br> 2. In a test suite object, the `testCaseCount` field changed to `executableTestCaseCount`. This change is caused by the [Variables group](https://techdocs.akamai.com/test-ctr/v3/reference/variables-overview) feature. <br>Impacted operations: <br> - [List test suites](#list-test-suites), <br>- [Add a test case to a test suite](#add-a-test-case-to-a-test-suite),<br> - [Generate a default test suite for a property](#generate-a-default-test-suite-for-a-property),<br> - [Import a test suite](#import-a-test-suite).<br> Implement necessary changes in your objects before running these operations.
+
+
 ## Install Test Center CLI
 
 To install this CLI, you need the [Akamai CLI](https://github.com/akamai/cli) package manager. Once you install the Akamai CLI, run this command:

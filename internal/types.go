@@ -12,7 +12,7 @@ type ClientProfile struct {
 	GeoLocation     string      `json:"geoLocation,omitempty"`
 	IpVersion       string      `json:"ipVersion"`
 	Browser         BrowserInfo `json:"browser,omitempty"`
-	ClientType      string      `json:"clientType,omitempty"`
+	Client          string      `json:"client,omitempty"`
 }
 
 type RequestHeader struct {
@@ -86,21 +86,21 @@ type TestSuiteImportFailure struct {
 }
 
 type TestSuiteV3 struct {
-	CreatedBy            string        `json:"createdBy,omitempty"`
-	CreatedDate          string        `json:"createdDate,omitempty"`
-	ModifiedBy           string        `json:"modifiedBy,omitempty"`
-	ModifiedDate         string        `json:"modifiedDate,omitempty"`
-	DeletedBy            string        `json:"deletedBy,omitempty"`
-	DeletedDate          string        `json:"deletedDate,omitempty"`
-	TestSuiteId          int           `json:"testSuiteId,omitempty"`
-	TestSuiteName        string        `json:"testSuiteName"`
-	TestSuiteDescription string        `json:"testSuiteDescription,omitempty"`
-	IsLocked             bool          `json:"isLocked"`
-	IsStateful           bool          `json:"isStateful"`
-	TestCaseCount        int           `json:"testCaseCount"`
-	Configs              AkamaiConfigs `json:"configs,omitempty"`
-	TestCases            []TestCase    `json:"testCases,omitempty"`
-	Variables            []Variable    `json:"variables,omitempty"`
+	CreatedBy               string        `json:"createdBy,omitempty"`
+	CreatedDate             string        `json:"createdDate,omitempty"`
+	ModifiedBy              string        `json:"modifiedBy,omitempty"`
+	ModifiedDate            string        `json:"modifiedDate,omitempty"`
+	DeletedBy               string        `json:"deletedBy,omitempty"`
+	DeletedDate             string        `json:"deletedDate,omitempty"`
+	TestSuiteId             int           `json:"testSuiteId,omitempty"`
+	TestSuiteName           string        `json:"testSuiteName"`
+	TestSuiteDescription    string        `json:"testSuiteDescription,omitempty"`
+	IsLocked                bool          `json:"isLocked"`
+	IsStateful              bool          `json:"isStateful"`
+	ExecutableTestCaseCount int           `json:"executableTestCaseCount"`
+	Configs                 AkamaiConfigs `json:"configs,omitempty"`
+	TestCases               []TestCase    `json:"testCases,omitempty"`
+	Variables               []Variable    `json:"variables,omitempty"`
 }
 
 type Variable struct {
@@ -114,7 +114,6 @@ type AkamaiConfigs struct {
 }
 
 type PropertyManager struct {
-	ConfigVersionId int    `json:"configVersionId,omitempty"`
 	PropertyId      int    `json:"propertyId,omitempty"`
 	PropertyName    string `json:"propertyName,omitempty"`
 	PropertyVersion int    `json:"propertyVersion"`
@@ -143,41 +142,43 @@ type TestRun struct {
 }
 
 type FunctionalTestRun struct {
-	Status                  string                   `json:"status,omitempty"`
-	TestSuiteExecutions     []TestSuiteExecution     `json:"testSuiteExecutions,omitempty"`
-	ConfigVersionExecutions []ConfigVersionExecution `json:"configVersionExecutions,omitempty"`
-	TestCaseExecutionV3     TestCaseExecutionV3      `json:"testCaseExecution,omitempty"`
+	Status                   string                   `json:"status,omitempty"`
+	TestSuiteExecutionsV3    []TestSuiteExecutionV3   `json:"testSuiteExecutions,omitempty"`
+	PropertyManagerExecution PropertyManagerExecution `json:"propertyManagerExecution,omitempty"`
+	TestCaseExecution        TestCaseExecution        `json:"testCaseExecution,omitempty"`
 }
 
-type ConfigVersionExecution struct {
-	ConfigVersionId     int                  `json:"configVersionId"`
-	Status              string               `json:"status,omitempty"`
-	TestSuiteExecutions []TestSuiteExecution `json:"testSuiteExecutions"`
+type PropertyManagerExecution struct {
+	PropertyId            int                    `json:"propertyId,omitempty"`
+	PropertyName          string                 `json:"propertyName"`
+	PropertyVersion       int                    `json:"propertyVersion"`
+	TestSuiteExecutionsV3 []TestSuiteExecutionV3 `json:"testSuiteExecutions,omitempty"`
 }
 
-type TestSuiteExecution struct {
+type TestSuiteExecutionV3 struct {
 	TestSuiteId          int                   `json:"testSuiteId"`
 	Status               string                `json:"status,omitempty"`
-	TestCaseExecutionV2  []TestCaseExecutionV2 `json:"testCaseExecutions"`
-	TestSuiteExecutionId int                   `json:"testSuiteExecutionId,omitempty"`
-	SubmittedBy          string                `json:"submittedBy,omitempty"`
-	SubmittedDate        string                `json:"submittedDate,omitempty"`
-	CompletedDate        string                `json:"completedDate,omitempty"`
+	TestCaseExecutionsV3 []TestCaseExecutionV3 `json:"testCaseExecutions"`
+	TestSuiteContext     TestSuiteV3
+	TestSuiteExecutionId int    `json:"testSuiteExecutionId,omitempty"`
+	SubmittedBy          string `json:"submittedBy,omitempty"`
+	SubmittedDate        string `json:"submittedDate,omitempty"`
+	CompletedDate        string `json:"completedDate,omitempty"`
 }
 
-type TestCaseExecutionV2 struct {
+type TestCaseExecutionV3 struct {
 	TestCaseId                int                       `json:"testCaseId"`
 	TestCaseExecutionId       int                       `json:"testCaseExecutionId,omitempty"`
 	Status                    string                    `json:"status,omitempty"`
 	ConditionEvaluationResult ConditionEvaluationResult `json:"conditionEvaluationResult,omitempty"`
+	TestCaseContext           TestCase                  `json:"testCaseContext,omitempty"`
 	Errors                    []ApiSubError             `json:"errors,omitempty"`
-	Order                     int                       `json:"order,omitempty"`
 	SubmittedBy               string                    `json:"submittedBy,omitempty"`
 	SubmittedDate             string                    `json:"submittedDate,omitempty"`
 	CompletedDate             string                    `json:"completedDate,omitempty"`
 }
 
-type TestCaseExecutionV3 struct {
+type TestCaseExecution struct {
 	TestRequest               TestRequest               `json:"testRequest"`
 	ClientProfile             ClientProfile             `json:"clientProfile,omitempty"`
 	Condition                 Condition                 `json:"condition"`
@@ -206,15 +207,15 @@ type TestRunContext struct {
 }
 
 type FunctionalContext struct {
-	TestSuites     []TestSuiteContext     `json:"testSuites,omitempty"`
-	TestCases      []TestCase             `json:"testCases,omitempty"`
-	ConfigVersions []ConfigVersionContext `json:"configVersions,omitempty"`
+	TestSuites       []TestSuiteContext       `json:"testSuites,omitempty"`
+	TestCases        []TestCase               `json:"testCases,omitempty"`
+	PropertyManagers []PropertyManagerContext `json:"propertyManagers,omitempty"`
 }
 
 type FunctionalContextMap struct {
-	TestSuitesMap     map[int]TestSuiteContextMap
-	TestCasesMap      map[int]TestCase
-	ConfigVersionsMap map[int]ConfigVersionContextMap
+	TestSuitesMap       map[int]TestSuiteContextMap
+	TestCasesMap        map[int]TestCase
+	PropertyManagersMap map[int]PropertyManagerContextMap
 }
 
 type TestSuiteContext struct {
@@ -226,13 +227,13 @@ type TestSuiteContextMap struct {
 	*TestSuite
 	TestCasesMap map[int]TestCase
 }
-type ConfigVersionContext struct {
-	*ConfigVersion
+type PropertyManagerContext struct {
+	*PropertyManager
 	TestSuites []TestSuiteContext `json:"testSuites,omitempty"`
 }
 
-type ConfigVersionContextMap struct {
-	*ConfigVersion
+type PropertyManagerContextMap struct {
+	*PropertyManager
 	TestSuitesMap map[int]TestSuiteContextMap
 }
 

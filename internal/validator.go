@@ -284,7 +284,6 @@ func (validator Validator) UrlsFlagCheck(urls []string) {
 			AbortWithUsageAndMessageAndCode(validator.cmd, GetErrorMessageForFlag(validator.cmd, Invalid, "url"), ExitStatusCode2)
 		}
 	}
-
 }
 
 // Check if length of run test using list has more than one different king of flag.

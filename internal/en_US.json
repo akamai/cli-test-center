@@ -549,7 +549,9 @@
             "externalApiDataError": "At least one property in your account is tied to multiple groups in Control Center. Test Center requires the property to be tied to exactly one group. Contact Akamai technical support to fix this.",
             "maxAssociationsExceeded": "The number of test cases in this test suite exceeded the limit of '{{maxLimit}}'. Create a new test suite for test cases exceeding the limit.",
             "clientProfileOfExistingAssociatedTestCasesDoNotMatch": "The test suite to which you are trying to add test cases is stateful. It accepts only test cases with the same client profile as test cases already included in the test suite. Change the test cases or add it to a different test suite.",
-            "testCasesContainsHeterogeneousClientProfiles": "In stateful test suites, test cases need to have the same client profile. Edit the test cases and try again."
+            "testCasesContainsHeterogeneousClientProfiles": "In stateful test suites, test cases need to have the same client profile. Edit the test cases and try again.",
+            "requiredFieldMissing": "The '{{requestField}}' is missing.",
+            "hostnameAccessMissing": "You don't have access to all the hostnames of included test cases. Get the access or edit the hostnames and try again."
           },
           "subCommand": {
             "invalid": {
@@ -789,7 +791,7 @@
                 "configVersionIdTestSuiteIdAssociationNotFound": "Some of the property versions and test suites associations could not be found. Verify the associations and try again.",
                 "testSuiteIdTestCaseIdAssociationNotFound": "Some of the test suites and test cases associations could not be found. Verify the associations and try again."
               },
-              "invalidClientTypeRequestMethodCombination": "Invalid combination of client type and request method. HEAD and POST request methods are allowed only with CURL client Type."
+              "invalidClientRequestMethodCombination": "Invalid combination of client and request method. HEAD and POST request methods are allowed only with CURL client."
             },
             "rateLimitExceeded": {
               "rateLimitTestRunHostnameExceeded": "The number of test runs for a hostname exceeded the rate limit. Try again later."

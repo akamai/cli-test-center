@@ -40,9 +40,9 @@ const (
 	Ipv6 = "IPV6"
 )
 
-// Browser ClientTypes
+// Chrome Client
 const (
-	Browser = "BROWSER"
+	Chrome = "CHROME"
 )
 
 // Environments

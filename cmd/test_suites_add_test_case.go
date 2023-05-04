@@ -21,7 +21,7 @@ var testSuitesAddTestCaseCmd = &cobra.Command{
 		//Check if all required flag are present.
 		validator.AddTestCaseToTestSuiteFlagCheck(testSuiteIdStr, testSuiteName, url, condition, ipVersion, addHeader, modifyHeader)
 
-		testSuites := svc.GetTestSuitesByIdOrName(testSuiteIdStr, testSuiteName, internal.Empty, true, false)
+		testSuites := svc.GetTestSuitesByIdOrName(testSuiteIdStr, testSuiteName, internal.Empty, true, false, true)
 		svc.AddTestCaseWithTestSuite(testSuites, testSuiteName, url, condition, ipVersion, addHeader, modifyHeader, filterHeader)
 	},
 }

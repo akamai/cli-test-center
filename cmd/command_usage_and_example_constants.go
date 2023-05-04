@@ -57,13 +57,13 @@ const (
 	TestSuiteRestoreExample = `  $ akamai test-center test-suite restore --name "Test suite name"
   $ akamai test-center test-suite restore --id 12345`
 
-	TestSuiteViewUse     = "view [--id ID | --name NAME] [--group-by test-request | condition | ipversion]"
+	TestSuiteViewUse     = "view [--id ID | --name NAME] [--group-by test-request | condition | ip-version]"
 	TestSuiteViewExample = `  $ akamai test-center test-suite view --id 1001
   $ akamai test-center test-suite view --name 'Example TS' --group-by test-request`
 	TestSuiteViewCommandAliases = "export"
 
 	ConditionTemplateUse     = "conditions"
-	ConditionTemplateExample = "  $ akamai test-center conditions"
+	ConditionTemplateExample = `  $ akamai test-center conditions`
 )
 
 // Flag Names
@@ -119,4 +119,11 @@ const (
 	FlagEdgercDefaultValue    = "~/.edgerc"
 	FlagSectionDefaultValue   = "test-center"
 	FlagIpVersionDefaultValue = "V4"
+)
+
+// Environment variable Constants
+const (
+	DefaultEdgercPathKey    = "AKAMAI_EDGERC"
+	DefaultEdgercSectionKey = "AKAMAI_EDGERC_SECTION"
+	DefaultJsonOutputKey    = "AKAMAI_OUTPUT_JSON"
 )

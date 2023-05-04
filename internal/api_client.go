@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/clarketm/json"
 	log "github.com/sirupsen/logrus"
@@ -100,9 +101,9 @@ func (api ApiClient) GetTestRunContext(testRunId int) (*TestRunContext, *CliErro
 	return nil, CliErrorFromPulsarProblemObject(*byt, nil, resp.StatusCode, ApiErrorTestRunContextGetCall)
 }
 
-func (api ApiClient) GetTestSuitesV3(propertyName, propVersion, user string) ([]TestSuiteV3, *CliError) {
+func (api ApiClient) GetTestSuitesV3(propertyName, propVersion, user string, includeDeleted bool) ([]TestSuiteV3, *CliError) {
 
-	v3Path := "/test-management/v3/functional/test-suites?includeRecentlyDeleted=true"
+	v3Path := "/test-management/v3/functional/test-suites?includeRecentlyDeleted=" + strconv.FormatBool(includeDeleted)
 	tsV3Url, _ := url.Parse(v3Path)
 
 	// add optional query parameters
