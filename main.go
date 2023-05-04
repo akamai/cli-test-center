@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	VERSION string = "0.1.1"
+	VERSION string = "0.2.0"
 )
 
 func main() {

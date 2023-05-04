@@ -2,7 +2,7 @@ package internal
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -69,8 +69,8 @@ func (h EdgeGridHttpClient) request(method string, path string, payload *[]byte,
 		os.Exit(ExitStatusCode1)
 	}
 	defer resp.Body.Close()
+	byt, err := io.ReadAll(resp.Body)
 
-	byt, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		AbortWithExitCode(err.Error(), ExitStatusCode1)
 	}

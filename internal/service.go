@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -24,7 +23,7 @@ func NewService(api ApiClient, cmd *cobra.Command, jsonOutput bool) *Service {
 func (svc Service) GetTestSuites(propertyName, propVersion, user, searchString string) []TestSuiteV3 {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "getTestSuite"), !svc.jsonOutput).Start()
-	testSuitesV3, err := svc.api.GetTestSuitesV3(propertyName, propVersion, user)
+	testSuitesV3, err := svc.api.GetTestSuitesV3(propertyName, propVersion, user, true)
 	if err != nil {
 		spinner.StopWithFailure()
 		AbortForCommand(svc.cmd, err)
@@ -43,7 +42,7 @@ func (svc Service) GetTestSuites(propertyName, propVersion, user, searchString s
 func (svc Service) ImportTestSuites(testSuiteImport TestSuiteV3) {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "importTestSuite"), !svc.jsonOutput).Start()
-	svc.setClientTypeAndRequestMethod(&testSuiteImport)
+	svc.setClientAndRequestMethod(&testSuiteImport)
 	testSuiteImportResponseV3, err := svc.api.ImportTestSuite(testSuiteImport)
 
 	if err != nil {
@@ -57,7 +56,7 @@ func (svc Service) ImportTestSuites(testSuiteImport TestSuiteV3) {
 	}
 
 	PrintViewTestSuite(svc.cmd, []TestSuiteV3{testSuiteImportResponseV3.Success}, testSuiteImportResponseV3.Success.TestSuiteName)
-	printLabelAndValue(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "testCasesAdded"), testSuiteImportResponseV3.Success.TestCaseCount)
+	printLabelAndValue(GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "testCasesAdded"), testSuiteImportResponseV3.Success.ExecutableTestCaseCount)
 
 	if testSuiteImportResponseV3.Failure.TestCases != nil {
 		PrintError("\n" + GetServiceMessage(svc.cmd, MessageTypeDisplay, "", "importTSTestCaseFailed") + "\n")
@@ -72,7 +71,7 @@ func (svc Service) ImportTestSuites(testSuiteImport TestSuiteV3) {
 func (svc Service) ManageTestSuites(testSuiteManage TestSuiteV3) {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "manageTestSuite"), !svc.jsonOutput).Start()
-	svc.setClientTypeAndRequestMethod(&testSuiteManage)
+	svc.setClientAndRequestMethod(&testSuiteManage)
 	testSuiteManageResponseV3, err := svc.api.ManageTestSuite(testSuiteManage, testSuiteManage.TestSuiteId)
 
 	if err != nil {
@@ -172,7 +171,7 @@ func (svc Service) RestoreTestSuiteById(id string) *TestSuiteV3 {
 
 }
 
-func (svc Service) GetTestSuitesByIdOrName(id, name, subResource string, exactMatch, shouldMatchDescription bool) []TestSuiteV3 {
+func (svc Service) GetTestSuitesByIdOrName(id, name, subResource string, exactMatch, shouldMatchDescription, includeDeleted bool) []TestSuiteV3 {
 
 	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeSpinner, "", "getTestSuite"), !svc.jsonOutput).Start()
 
@@ -188,7 +187,7 @@ func (svc Service) GetTestSuitesByIdOrName(id, name, subResource string, exactMa
 		return []TestSuiteV3{*testSuite}
 	} else {
 
-		testSuitesV3, err := svc.api.GetTestSuitesV3("", "", "")
+		testSuitesV3, err := svc.api.GetTestSuitesV3("", "", "", includeDeleted)
 		if err != nil {
 			spinner.StopWithFailure()
 			AbortForCommandWithSubResource(svc.cmd, err, subResource, Read)
@@ -199,9 +198,9 @@ func (svc Service) GetTestSuitesByIdOrName(id, name, subResource string, exactMa
 	}
 }
 
-func (svc Service) GetSingleTestSuiteByIdOrName(id, name, subResource string) *TestSuiteV3 {
+func (svc Service) GetSingleTestSuiteByIdOrName(id, name, subResource string, includeDeleted bool) *TestSuiteV3 {
 
-	testSuites := svc.GetTestSuitesByIdOrName(id, name, subResource, true, false)
+	testSuites := svc.GetTestSuitesByIdOrName(id, name, subResource, true, false, includeDeleted)
 
 	if len(testSuites) == 1 {
 		return &testSuites[0]
@@ -280,7 +279,7 @@ func (svc Service) GetTestSuiteOrTestSuiteDetailsWithChildObjects(id, name strin
 
 	var testSuiteDetailsWithChildObjects = TestSuiteV3{}
 	if name != "" {
-		testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false)
+		testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false, true)
 		if len(testSuites) > 1 {
 			return testSuites, testSuiteDetailsWithChildObjects
 		}
@@ -309,7 +308,7 @@ func (svc Service) ViewTestSuite(id string, name string, groupBy string) {
 			PrintJsonAndExit(testSuiteDetailsWithChildObjects)
 		} else {
 			PrintViewTestSuite(svc.cmd, []TestSuiteV3{TestSuiteV3(testSuiteDetailsWithChildObjects)}, name)
-			if testSuiteDetailsWithChildObjects.TestCaseCount == len(testSuiteDetailsWithChildObjects.TestCases) {
+			if testSuiteDetailsWithChildObjects.ExecutableTestCaseCount == len(testSuiteDetailsWithChildObjects.TestCases) {
 				areAllTestCasesIncluded = true
 			}
 			PrintTestCases(svc.cmd, testSuiteDetailsWithChildObjects.TestCases, areAllTestCasesIncluded, groupBy)
@@ -319,7 +318,7 @@ func (svc Service) ViewTestSuite(id string, name string, groupBy string) {
 
 func (svc Service) RemoveTestSuiteByIdOrName(id string, name string) {
 
-	testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false)
+	testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false, true)
 
 	if len(testSuites) == 1 {
 		testSuiteId := strconv.Itoa(testSuites[0].TestSuiteId)
@@ -341,7 +340,7 @@ func (svc Service) RemoveTestSuiteByIdOrName(id string, name string) {
 
 func (svc Service) RestoreTestSuiteByIdOrName(id string, name string) {
 
-	testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false)
+	testSuites := svc.GetTestSuitesByIdOrName(id, name, Empty, false, false, true)
 	if len(testSuites) == 1 {
 		testSuiteId := strconv.Itoa(testSuites[0].TestSuiteId)
 		testSuite := svc.RestoreTestSuiteById(testSuiteId)
@@ -417,24 +416,12 @@ func (svc Service) RunTest(runTestUsing, testSuiteId, testSuiteName, propertyNam
 	case RunTestUsingTestSuiteName:
 		testRun = svc.findAndRunTestSuite(testSuiteName, targetEnvironment, runTestUsing)
 	case RunTestUsingPropertyVersion:
-		testRun = svc.findAndRunPropertyVersion(propertyName, propVersion, targetEnvironment, runTestUsing)
+		testRun = svc.runPropertyVersion(propertyName, propVersion, targetEnvironment, runTestUsing)
 	case RunTestUsingSingleTestCase:
 		testRun = svc.runTestCase(url, condition, ipVersion, addHeader, modifyHeader, filterHeader, targetEnvironment, runTestUsing)
 	case RunTestUsingJsonInput:
 		testRun = svc.startTestRun(testRunRequestFromJson, runTestUsing)
 	}
-
-	// Fetch test run context
-	// TODO: Add retries for all API calls
-	var testRunContext *TestRunContext
-	go func() {
-		trContext, err := svc.api.GetTestRunContext(testRun.TestRunId)
-		if err != nil {
-			AbortForCommandWithSubResource(svc.cmd, err, TestRunResource, Read)
-			return
-		}
-		testRunContext = trContext
-	}()
 
 	// Wait for test run results
 	testResult, err := svc.waitForTestRunCompletion(testRun.TestRunId, runTestUsing)
@@ -443,11 +430,12 @@ func (svc Service) RunTest(runTestUsing, testSuiteId, testSuiteName, propertyNam
 	}
 
 	// Print test run result
-	PrintTestResult(svc.cmd, testResult, testRunContext)
+	PrintTestResult(svc.cmd, testResult)
+
 }
 
 func (svc Service) findAndRunTestSuite(testSuiteName, targetEnvironment string, runTestUsing string) *TestRun {
-	testSuite := svc.GetSingleTestSuiteByIdOrName("", testSuiteName, TestSuiteResource)
+	testSuite := svc.GetSingleTestSuiteByIdOrName("", testSuiteName, TestSuiteResource, false)
 	if testSuite == nil {
 		AbortWithExitCode(fmt.Sprintf(GetMessageForKey(svc.cmd, "testSuiteNameNotFound")+"\n", testSuiteName), ExitStatusCode0)
 	}
@@ -455,26 +443,15 @@ func (svc Service) findAndRunTestSuite(testSuiteName, targetEnvironment string, 
 	return svc.runTestSuiteWithId(testSuite.TestSuiteId, targetEnvironment, runTestUsing)
 }
 
-func (svc Service) runTestSuiteWithId(testSuiteId int, targetEnvironment string, runTestUsing string) *TestRun {
-	testCaseIds := svc.getAssociatedTestCaseIdsForTestSuiteId(testSuiteId, runTestUsing)
-
-	if len(testCaseIds) == 0 {
-		AbortWithExitCode(GetMessageForKey(svc.cmd, "testCasesNotFound")+"\n", ExitStatusCode0)
-	}
-
-	return svc.runTestSuite(testSuiteId, testCaseIds, targetEnvironment, runTestUsing)
-}
-
-func (svc Service) runTestSuite(testSuiteId int, testCaseIds []int, environment string, runTestUsing string) *TestRun {
+func (svc Service) runTestSuiteWithId(testSuiteId int, environment string, runTestUsing string) *TestRun {
 
 	testRun := TestRun{
 		SendEmailOnCompletion: false,
 		TargetEnvironment:     environment,
 		Functional: FunctionalTestRun{
-			TestSuiteExecutions: []TestSuiteExecution{
+			TestSuiteExecutionsV3: []TestSuiteExecutionV3{
 				{
-					TestSuiteId:         testSuiteId,
-					TestCaseExecutionV2: getTestCaseExecutions(testCaseIds),
+					TestSuiteId: testSuiteId,
 				},
 			},
 		},
@@ -483,102 +460,15 @@ func (svc Service) runTestSuite(testSuiteId int, testCaseIds []int, environment 
 	return svc.startTestRun(testRun, runTestUsing)
 }
 
-func (svc Service) findAndRunPropertyVersion(propertyName, propVersion, targetEnvironment string, runTestUsing string) *TestRun {
-
-	config := svc.findPropertyVersion(propertyName, propVersion, runTestUsing)
-
-	testSuites := svc.findTestSuitesForPropertyVersion(propertyName, propVersion, runTestUsing)
-	if len(testSuites) == 0 {
-		AbortWithExitCode(GetMessageForKey(svc.cmd, PropertyVersionTestSuitesNotFound)+"\n", ExitStatusCode0)
-	}
-
-	var testSuiteIds []int
-	for _, testSuite := range testSuites {
-		testSuiteIds = append(testSuiteIds, testSuite.TestSuiteId)
-	}
-
-	testSuiteExecutionsChan := make(chan TestSuiteExecution, len(testSuiteIds))
-
-	var wg sync.WaitGroup
-	wg.Add(len(testSuiteIds))
-	for _, testSuiteId := range testSuiteIds {
-		go func(testSuiteId int) {
-			defer wg.Done()
-			testCaseIds := svc.getAssociatedTestCaseIdsForTestSuiteId(testSuiteId, runTestUsing)
-			testCaseExecutions := getTestCaseExecutions(testCaseIds)
-			testSuiteExecution := TestSuiteExecution{
-				TestSuiteId:         testSuiteId,
-				TestCaseExecutionV2: testCaseExecutions,
-			}
-
-			// Ignore test suites that don't have any test cases
-			if len(testCaseExecutions) > 0 {
-				testSuiteExecutionsChan <- testSuiteExecution
-			}
-		}(testSuiteId) // Fetch test suites' associated test cases in parallel
-	}
-
-	wg.Wait()
-	close(testSuiteExecutionsChan)
-
-	var testSuiteExecutions []TestSuiteExecution
-	for testSuiteExecution := range testSuiteExecutionsChan {
-		testSuiteExecutions = append(testSuiteExecutions, testSuiteExecution)
-	}
-
-	if len(testSuiteExecutions) == 0 {
-		AbortWithExitCode(GetMessageForKey(svc.cmd, "noTestCases")+"\n", ExitStatusCode0)
-	}
-
-	return svc.runConfigVersion(config.ConfigVersionId, testSuiteExecutions, targetEnvironment, runTestUsing)
-}
-
-func (svc Service) findPropertyVersion(propertyName string, propVersion string, runTestUsing string) *ConfigVersion {
-
-	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeTestCmdSpinner, runTestUsing, "findPropertyVersion"), !svc.jsonOutput).Start()
-	propertyVersions, err := svc.api.GetConfigVersions()
-	if err != nil {
-		spinner.StopWithFailure()
-		AbortForCommandWithSubResource(svc.cmd, err, PropertyVersionsResource, Read)
-	}
-
-	cleanedLowerCasePropertyName := strings.TrimSpace(strings.ToLower(propertyName))
-	versionNumber, _ := strconv.Atoi(propVersion)
-	for _, propertyVersion := range propertyVersions {
-		if cleanedLowerCasePropertyName == strings.TrimSpace(strings.ToLower(propertyVersion.PropertyName)) && versionNumber == propertyVersion.PropertyVersion {
-			spinner.StopWithSuccess()
-			return &propertyVersion
-		}
-	}
-
-	spinner.StopWithFailure()
-	AbortWithExitCode(GetMessageForKey(svc.cmd, PropertyVersionNotFound)+"\n", ExitStatusCode0)
-	return nil
-}
-
-func (svc Service) findTestSuitesForPropertyVersion(propertyName string, propVersion string, runTestUsing string) []TestSuiteV3 {
-	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeTestCmdSpinner, runTestUsing, "findTestSuite"), !svc.jsonOutput).Start()
-	testSuites, err := svc.api.GetTestSuitesV3(propertyName, propVersion, "")
-	if err != nil {
-		spinner.StopWithFailure()
-		AbortForCommandWithSubResource(svc.cmd, err, TestSuiteResource, Read)
-	}
-
-	spinner.StopWithSuccess()
-	return testSuites
-}
-
-func (svc Service) runConfigVersion(configVersionId int, testSuiteExecutions []TestSuiteExecution, environment string, runTestUsing string) *TestRun {
-
+func (svc Service) runPropertyVersion(propertyName, propVersion, environment string, runTestUsing string) *TestRun {
+	propertyVersion, _ := strconv.Atoi(propVersion)
 	testRun := TestRun{
 		SendEmailOnCompletion: false,
 		TargetEnvironment:     environment,
 		Functional: FunctionalTestRun{
-			ConfigVersionExecutions: []ConfigVersionExecution{
-				{
-					ConfigVersionId:     configVersionId,
-					TestSuiteExecutions: testSuiteExecutions,
-				},
+			PropertyManagerExecution: PropertyManagerExecution{
+				PropertyName:    propertyName,
+				PropertyVersion: propertyVersion,
 			},
 		},
 	}
@@ -589,16 +479,16 @@ func (svc Service) runConfigVersion(configVersionId int, testSuiteExecutions []T
 func (svc Service) runTestCase(url, condition, ipVersion string, addHeader, modifyHeader,
 	filterHeader []string, targetEnvironment string, runTestUsing string) *TestRun {
 
-	var clientProfile = ClientProfile{IpVersion: Ipv4, ClientType: Browser}
+	var clientProfile = ClientProfile{IpVersion: Ipv4, Client: Chrome}
 	if strings.ToUpper(ipVersion) == "V6" {
-		clientProfile = ClientProfile{IpVersion: Ipv6, ClientType: Browser}
+		clientProfile = ClientProfile{IpVersion: Ipv6, Client: Chrome}
 	}
 
 	testRun := TestRun{
 		SendEmailOnCompletion: false,
 		TargetEnvironment:     targetEnvironment,
 		Functional: FunctionalTestRun{
-			TestCaseExecutionV3: TestCaseExecutionV3{
+			TestCaseExecution: TestCaseExecution{
 				TestRequest: TestRequest{
 					TestRequestUrl: url,
 					RequestMethod:  Get,
@@ -613,24 +503,6 @@ func (svc Service) runTestCase(url, condition, ipVersion string, addHeader, modi
 	}
 
 	return svc.startTestRun(testRun, runTestUsing)
-}
-
-func (svc Service) getAssociatedTestCaseIdsForTestSuiteId(testSuiteId int, runTestUsing string) []int {
-	spinner := NewSpinner(GetServiceMessage(svc.cmd, MessageTypeTestCmdSpinner, runTestUsing, "findTestCases"), !svc.jsonOutput).Start()
-	testCases, err := svc.api.GetV3AssociatedTestCasesForTestSuite(testSuiteId)
-	if err != nil {
-		spinner.StopWithFailure()
-		AbortForCommandWithSubResource(svc.cmd, err, TestCaseResource, Read)
-	}
-
-	spinner.StopWithSuccess()
-
-	var testCaseIds []int
-	for _, testCase := range testCases.TestCases {
-		testCaseIds = append(testCaseIds, testCase.TestCaseId)
-	}
-
-	return testCaseIds
 }
 
 func (svc Service) startTestRun(testRun TestRun, runTestUsing string) *TestRun {
@@ -683,18 +555,6 @@ func (svc Service) waitForTestRunCompletion(testRunId int, runTestUsing string) 
 	return nil, CliErrorWithMessage(CliErrorMessageTestRunStatus)
 }
 
-func getTestCaseExecutions(testCaseIds []int) []TestCaseExecutionV2 {
-	var testCaseExecutions []TestCaseExecutionV2
-
-	for _, testCaseId := range testCaseIds {
-		testCaseExecutions = append(testCaseExecutions, TestCaseExecutionV2{
-			TestCaseId: testCaseId,
-		})
-	}
-
-	return testCaseExecutions
-}
-
 func constructTestCase(url string, addHeader, modifyHeader, filterHeader []string, condition, ipVersion string) TestCase {
 	var (
 		testCase        TestCase
@@ -715,10 +575,10 @@ func constructTestCase(url string, addHeader, modifyHeader, filterHeader []strin
 	}
 
 	clientProfileId = 2 // Use default IPv4
-	clientProfile = ClientProfile{IpVersion: Ipv4, ClientType: Browser}
+	clientProfile = ClientProfile{IpVersion: Ipv4, Client: Chrome}
 	if strings.ToUpper(ipVersion) == "V6" {
 		clientProfileId = 1
-		clientProfile = ClientProfile{IpVersion: Ipv6, ClientType: Browser}
+		clientProfile = ClientProfile{IpVersion: Ipv6, Client: Chrome}
 	}
 
 	testCase = TestCase{
@@ -894,13 +754,13 @@ func (svc Service) GenerateTestSuite(propertyName string, propVersion int, urls 
 	PrintJsonAndExit(generatedTs)
 }
 
-// setClientTypeAndRequestMethod set ClientType and RequestMethod to defaults
-func (svc Service) setClientTypeAndRequestMethod(testSuiteV3 *TestSuiteV3) {
+// setClientAndRequestMethod set Client and RequestMethod to defaults
+func (svc Service) setClientAndRequestMethod(testSuiteV3 *TestSuiteV3) {
 	if testSuiteV3 != nil && len(testSuiteV3.TestCases) > 0 {
 		var updatedTestCases []TestCase
 		for _, tc := range testSuiteV3.TestCases {
 			tc.TestRequest.RequestMethod = Get
-			tc.ClientProfile.ClientType = Browser
+			tc.ClientProfile.Client = Chrome
 			updatedTestCases = append(updatedTestCases, tc)
 		}
 		testSuiteV3.TestCases = updatedTestCases

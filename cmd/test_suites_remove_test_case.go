@@ -23,7 +23,7 @@ var testSuitesRemoveTestCaseCmd = &cobra.Command{
 		validator.RemoveTestCaseFromTestSuiteFlagCheck(testSuiteIdStr, orderNumber)
 
 		testSuiteId, _ := strconv.Atoi(testSuiteIdStr)
-		testSuite := svc.GetSingleTestSuiteByIdOrName(testSuiteIdStr, "", internal.Empty)
+		testSuite := svc.GetSingleTestSuiteByIdOrName(testSuiteIdStr, "", internal.Empty, true)
 		testCases, _ := svc.GetV3AssociatedTestCasesForTestSuite(testSuiteId)
 		svc.RemoveTestCaseFromTestSuiteUsingOrderNumber(testSuite, testCases, orderNumber)
 	},
