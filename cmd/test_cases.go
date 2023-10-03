@@ -8,21 +8,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var testCaseExecutionId string
+var (
+	testCaseIdStr    string
+	resolveVariables bool
+	setVariables     []string
+)
 
-var testCmd = &cobra.Command{
-	Use:     externalconstant.TestUse,
-	Aliases: []string{externalconstant.TestCommandAlias},
+var testCaseCmd = &cobra.Command{
+	Use:     externalconstant.TestCaseUse,
+	Aliases: []string{externalconstant.TestCaseCommandAlias},
 	Run: func(cmd *cobra.Command, args []string) {
 		globalValidator := validator.NewGlobalValidator(cmd, jsonData)
-		// validate subcommand
+
 		globalValidator.ValidateParentSubCommands(cmd, args, false)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(testCmd)
 
-	testCmd.Short = util.GetMessageForKey(testCmd, internalconstant.Short)
-	testCmd.Long = util.GetMessageForKey(testCmd, internalconstant.Long)
+	rootCmd.AddCommand(testCaseCmd)
+	testCaseCmd.Flags().SortFlags = false
+
+	testCaseCmd.Short = util.GetMessageForKey(testCaseCmd, internalconstant.Short)
+	testCaseCmd.Long = util.GetMessageForKey(testCaseCmd, internalconstant.Long)
+
 }

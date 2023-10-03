@@ -3,7 +3,9 @@ package cmd
 import (
 	"errors"
 	"github.com/akamai/AkamaiOPEN-edgegrid-golang/edgegrid"
-	"github.com/akamai/cli-test-center/internal"
+	internalconstant "github.com/akamai/cli-test-center/internal/constant"
+	"github.com/akamai/cli-test-center/internal/util"
+	externalconstant "github.com/akamai/cli-test-center/user/constant"
 	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -25,7 +27,7 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use: RootCommandUse,
+	Use: externalconstant.RootCommandUse,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		if forceColor {
 			color.NoColor = false
@@ -34,7 +36,7 @@ var rootCmd = &cobra.Command{
 		var err error
 		config, err = edgegrid.InitEdgeRc(edgeRcPath, edgeRcSection)
 		if err != nil {
-			internal.AbortWithExitCode(internal.GetGlobalErrorMessage("initEdgeRc"), internal.ExitStatusCode1)
+			util.AbortWithExitCode(util.GetGlobalErrorMessage(internalconstant.InitEdgeRc), internalconstant.ExitStatusCode1)
 		}
 	},
 }
@@ -43,18 +45,18 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute(Version string) {
 	rootCmd.Version = Version
-	code := internal.ExitStatusCode0
+	code := internalconstant.ExitStatusCode0
 	if err := rootCmd.Execute(); err != nil {
 		switch err.Error() {
 		case "2":
 			// For rootCmd and Subcommand invalid flags
-			code = internal.ExitStatusCode2
+			code = internalconstant.ExitStatusCode2
 			break
 		default:
-			internal.PrintError(err.Error() + "\n")
+			util.PrintError(err.Error() + "\n")
 			rootCmd.Println("\n" + rootCmd.UsageString())
 			// For rootCmd wrong arguments
-			code = internal.ExitStatusCode2
+			code = internalconstant.ExitStatusCode2
 			break
 		}
 	}
@@ -63,7 +65,7 @@ func Execute(Version string) {
 
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true // Remove this if we choose to offer a completion command
-	isStandardInputAvailable, jsonData = internal.ReadStdin(rootCmd)
+	isStandardInputAvailable, jsonData = util.ReadStdin(rootCmd)
 
 	rootCmd.Flags().SortFlags = false
 	rootCmd.PersistentFlags().SortFlags = false
@@ -73,34 +75,34 @@ func init() {
 	rootCmd.SilenceUsage = true
 
 	// Setting the default values for the global flags from environment variable.
-	defaultEdgercPath := os.Getenv(DefaultEdgercPathKey)
-	defaultEdgercSection := os.Getenv(DefaultEdgercSectionKey)
-	globalJsonFlag, _ := strconv.ParseBool(os.Getenv(DefaultJsonOutputKey))
+	defaultEdgercPath := os.Getenv(internalconstant.DefaultEdgercPathKey)
+	defaultEdgercSection := os.Getenv(internalconstant.DefaultEdgercSectionKey)
+	globalJsonFlag, _ := strconv.ParseBool(os.Getenv(internalconstant.DefaultJsonOutputKey))
 
-	if defaultEdgercPath == internal.Empty {
+	if defaultEdgercPath == internalconstant.Empty {
 		if home, err := homedir.Dir(); err == nil {
-			defaultEdgercPath = filepath.Join(home, FlagEdgercDefaultValue)
+			defaultEdgercPath = filepath.Join(home, internalconstant.EdgercFileNameDefaultValue)
 		}
 	}
 
-	if defaultEdgercSection == internal.Empty {
-		defaultEdgercSection = FlagSectionDefaultValue
+	if defaultEdgercSection == internalconstant.Empty {
+		defaultEdgercSection = internalconstant.SectionDefaultValue
 	}
 
 	rootCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
-		internal.PrintError(err.Error() + "\n\n")
+		util.PrintError(err.Error() + "\n\n")
 		cmd.Println(cmd.UsageString())
-		return errors.New(strconv.Itoa(internal.ExitStatusCode2))
+		return errors.New(strconv.Itoa(internalconstant.ExitStatusCode2))
 	})
 
-	rootCmd.Short = internal.GetMessageForKey(rootCmd, internal.Short)
-	rootCmd.Long = internal.GetMessageForKey(rootCmd, internal.Long)
+	rootCmd.Short = util.GetMessageForKey(rootCmd, internalconstant.Short)
+	rootCmd.Long = util.GetMessageForKey(rootCmd, internalconstant.Long)
 
-	rootCmd.PersistentFlags().StringVar(&edgeRcPath, FlagEdgerc, defaultEdgercPath, internal.GetMessageForKey(rootCmd, FlagEdgerc))
-	rootCmd.PersistentFlags().StringVar(&edgeRcSection, FlagSection, defaultEdgercSection, internal.GetMessageForKey(rootCmd, FlagSection))
-	rootCmd.PersistentFlags().StringVar(&accountSwitchKey, FlagAccountKey, internal.Empty, internal.GetMessageForKey(rootCmd, FlagAccountKey))
-	rootCmd.PersistentFlags().BoolVar(&jsonOutput, FlagJson, globalJsonFlag, internal.GetMessageForKey(rootCmd, FlagJson))
-	rootCmd.PersistentFlags().BoolVar(&forceColor, FlagForceColor, false, internal.GetMessageForKey(rootCmd, FlagForceColor))
-	rootCmd.Flags().BoolP(FlagHelp, FlagHelpShortHand, false, internal.GetMessageForKey(rootCmd, FlagHelp))
-	rootCmd.Flags().BoolP(FlagVersion, FlagVersionShortHand, false, internal.GetMessageForKey(rootCmd, FlagVersion))
+	rootCmd.PersistentFlags().StringVarP(&edgeRcPath, externalconstant.FlagEdgerc, externalconstant.FlagEdgercShortHand, defaultEdgercPath, util.GetMessageForKey(rootCmd, externalconstant.FlagEdgerc))
+	rootCmd.PersistentFlags().StringVarP(&edgeRcSection, externalconstant.FlagSection, externalconstant.FlagSectionShortHand, defaultEdgercSection, util.GetMessageForKey(rootCmd, externalconstant.FlagSection))
+	rootCmd.PersistentFlags().StringVar(&accountSwitchKey, externalconstant.FlagAccountKey, internalconstant.Empty, util.GetMessageForKey(rootCmd, externalconstant.FlagAccountKey))
+	rootCmd.PersistentFlags().BoolVar(&jsonOutput, externalconstant.FlagJson, globalJsonFlag, util.GetMessageForKey(rootCmd, externalconstant.FlagJson))
+	rootCmd.PersistentFlags().BoolVar(&forceColor, externalconstant.FlagForceColor, false, util.GetMessageForKey(rootCmd, externalconstant.FlagForceColor))
+	rootCmd.Flags().BoolP(externalconstant.FlagHelp, externalconstant.FlagHelpShortHand, false, util.GetMessageForKey(rootCmd, externalconstant.FlagHelp))
+	rootCmd.Flags().Bool(externalconstant.FlagVersion, false, util.GetMessageForKey(rootCmd, externalconstant.FlagVersion))
 }
