@@ -2,14 +2,12 @@ package main
 
 import (
 	"github.com/akamai/cli-test-center/cmd"
-	"github.com/akamai/cli-test-center/internal"
+	"github.com/akamai/cli-test-center/logger"
 )
 
-var (
-	VERSION string = "0.2.0"
-)
+var VERSION = "1.0.0"
 
 func main() {
-	internal.InitLoggingConfig()
+	logger.InitLoggingConfig()
 	cmd.Execute(VERSION)
 }
